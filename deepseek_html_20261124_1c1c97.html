@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Alastor: O Herdeiro das Cinzas — Um RPG medieval sombrio com magia, pactos demoníacos e múltiplos finais.">
+<meta name="author" content="Seu Nome">
+<meta name="theme-color" content="#0a0604">
+<meta property="og:title" content="Alastor: O Herdeiro das Cinzas">
+<meta property="og:description" content="RPG medieval sombrio em HTML/CSS/JS. 28 magias, 7 pactos demoníacos, 13+ finais.">
+<meta property="og:type" content="website">
+<title>Alastor: O Herdeiro das Cinzas</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌑</text></svg>">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=UnifrakturMaguntia&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{background:#000;color:#d8d2c8;font-family:'Crimson Text',Georgia,serif;height:100vh;overflow:hidden;display:flex;justify-content:center;align-items:center;}
+  #game{width:1100px;height:720px;background:radial-gradient(ellipse at 50% 20%,#1a1210 0%,#080606 60%,#000 100%);border:1px solid #4a2a10;box-shadow:0 0 60px #000,inset 0 0 100px #000,0 0 30px rgba(120,20,20,0.15);position:relative;overflow:hidden;display:flex;flex-direction:column;font-size:16px;}
+  #game::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 15% 85%,rgba(120,0,0,0.10) 0%,transparent 45%),radial-gradient(circle at 85% 15%,rgba(80,60,20,0.08) 0%,transparent 45%);pointer-events:none;animation:fog 15s ease-in-out infinite alternate;z-index:0;}
+  @keyframes fog{0%{opacity:0.5;transform:scale(1);}100%{opacity:1;transform:scale(1.05);}}
+  #game::after{content:'';position:absolute;inset:0;box-shadow:inset 0 0 120px 30px #000;pointer-events:none;z-index:2;}
+  #header{padding:9px 20px;background:linear-gradient(180deg,#0d0805,#050202);border-bottom:1px solid #4a2a10;display:flex;justify-content:space-between;align-items:center;font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;color:#b8944f;text-transform:uppercase;z-index:3;position:relative;gap:8px;}
+  #header span{text-shadow:0 0 10px rgba(184,148,79,0.5);white-space:nowrap;}
+  #location{color:#e0b860;font-weight:700;flex:1;}
+  #main{flex:1;display:flex;z-index:1;position:relative;overflow:hidden;}
+  #screen{flex:1;padding:24px 36px;overflow-y:auto;position:relative;z-index:1;}
+  #screen::-webkit-scrollbar{width:7px;}
+  #screen::-webkit-scrollbar-track{background:#0a0604;}
+  #screen::-webkit-scrollbar-thumb{background:#5a3a18;border-radius:3px;}
+  #sidePanel{width:250px;background:linear-gradient(180deg,#0a0604,#050202);border-left:1px solid #3a2a1a;padding:10px;display:flex;flex-direction:column;gap:5px;z-index:3;overflow-y:auto;}
+  #sidePanel::-webkit-scrollbar{width:4px;}
+  #sidePanel::-webkit-scrollbar-thumb{background:#3a2a1a;}
+  .panel-title{font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;color:#b8944f;text-align:center;border-bottom:1px solid #3a2a1a;padding-bottom:4px;margin-bottom:3px;margin-top:6px;}
+  .attr-row{display:flex;justify-content:space-between;font-size:12px;padding:2px 0;color:#c0b0a0;letter-spacing:1px;}
+  .attr-row .val{color:#f0d8a0;font-weight:700;}
+  .sprite-frame{width:100%;height:160px;background:radial-gradient(circle at 50% 70%,#1a0a0a 0%,#050202 100%);border:1px solid #3a2a1a;display:flex;justify-content:center;align-items:flex-end;padding-bottom:8px;position:relative;overflow:hidden;box-shadow:inset 0 0 30px #000;}
+  .sprite-frame::before{content:'';position:absolute;width:110px;height:110px;background:radial-gradient(circle,rgba(160,40,40,0.3) 0%,transparent 70%);bottom:5px;left:50%;transform:translateX(-50%);border-radius:50%;animation:auraPulse 4s ease-in-out infinite;}
+  @keyframes auraPulse{0%,100%{opacity:0.4;transform:translateX(-50%) scale(1);}50%{opacity:0.8;transform:translateX(-50%) scale(1.15);}}
+  h1{font-family:'UnifrakturMaguntia',serif;color:#e04040;text-align:center;font-size:48px;letter-spacing:3px;text-shadow:0 0 25px #500,0 0 50px #300,0 2px 4px #000;margin-bottom:12px;line-height:1.1;animation:titlePulse 3.5s infinite;}
+  @keyframes titlePulse{0%,100%{text-shadow:0 0 25px #500,0 0 50px #300,0 2px 4px #000;}50%{text-shadow:0 0 35px #a00,0 0 70px #500,0 2px 4px #000;}}
+  h2{font-family:'Cinzel',serif;color:#e0b860;font-size:19px;letter-spacing:3px;margin:16px 0 12px;text-transform:uppercase;border-bottom:1px solid #5a3a18;padding-bottom:7px;}
+  p{line-height:1.85;margin-bottom:14px;color:#e0d8cc;font-size:17px;}
+  .narration{font-style:italic;color:#c0b0a0;font-size:17px;}
+  .whisper{color:#ff5060;font-style:italic;text-shadow:0 0 12px #800;animation:whisperFade 3s infinite;}
+  @keyframes whisperFade{0%,100%{opacity:0.8;}50%{opacity:1;}}
+  .satella{color:#ffb070;font-style:italic;font-weight:600;}
+  .satella-god{color:#ffe080;font-style:italic;font-weight:700;text-shadow:0 0 15px #fa0,0 0 30px #a80;}
+  .alastor{color:#80c0ff;font-style:italic;font-weight:600;}
+  .demon{color:#d060ff;font-style:italic;font-weight:600;text-shadow:0 0 12px #a0a;}
+  .satan{color:#ff0040;font-style:italic;font-weight:700;text-shadow:0 0 20px #f00,0 0 40px #800,0 0 80px #400;animation:titlePulse 2s infinite;}
+  .god{color:#ffe080;font-style:italic;font-weight:600;text-shadow:0 0 15px #fa0,0 0 30px #a80;}
+  .villager{color:#b0e090;font-style:italic;font-weight:600;}
+  .merchant{color:#ffd060;font-style:italic;font-weight:600;}
+  .cult{color:#ff3070;font-style:italic;font-weight:600;text-shadow:0 0 12px #f00;}
+  .narrator{color:#a89888;font-style:italic;}
+  .namaroth{color:#c060ff;font-style:italic;font-weight:700;text-shadow:0 0 20px #a0a;}
+  .loot{color:#f0d888;font-weight:600;font-size:16px;}
+  .accent{color:#e04040;font-weight:700;}
+  .grimoire{color:#d080ff;font-style:italic;text-shadow:0 0 15px #8020ff;font-weight:600;}
+  .blind-text{color:#a0d0ff;font-style:italic;font-weight:600;}
+  .hp-cost-text{color:#ff5050;font-style:italic;font-weight:600;}
+  .shadow-magic{color:#a020c0;font-style:italic;font-weight:600;text-shadow:0 0 15px #8020a0;}
+  button{background:linear-gradient(180deg,#1a1008,#0a0604);color:#e0c8a0;border:1px solid #6a4a20;padding:13px 22px;font-family:'Cinzel',serif;font-size:12px;letter-spacing:1.5px;cursor:pointer;margin:4px;transition:all 0.25s;text-transform:uppercase;position:relative;overflow:hidden;font-weight:600;}
+  button::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(224,184,96,0.2),transparent);transition:left 0.4s;}
+  button:hover::before{left:100%;}
+  button:hover{background:linear-gradient(180deg,#3a2010,#1a0804);color:#ffd090;border-color:#d0a040;box-shadow:0 0 20px rgba(208,160,64,0.6);transform:translateY(-1px);}
+  button:disabled{opacity:0.4;cursor:not-allowed;transform:none;}
+  button.danger{border-color:#a02020;color:#ff8080;}
+  button.danger:hover{background:#3a0808;color:#ffa0a0;border-color:#e04040;}
+  button.magic-btn{border-color:#705090;color:#d0b0ff;}
+  button.magic-btn:hover{border-color:#b080ff;color:#e0c8ff;}
+  button.cult-btn{border-color:#a02050;color:#ff60a0;}
+  button.cult-btn:hover{border-color:#e03070;color:#ff90c0;}
+  button.grimoire-btn{border-color:#8030c0;color:#e090ff;}
+  button.grimoire-btn:hover{border-color:#c060ff;color:#f0b0ff;}
+  button.satella-btn{border-color:#a06020;color:#ffd070;}
+  button.satella-btn:hover{border-color:#e0a040;color:#ffe090;}
+  button.demon-btn{border-color:#8020c0;color:#d080ff;}
+  button.demon-btn:hover{border-color:#c060ff;color:#f0a0ff;box-shadow:0 0 25px rgba(192,96,255,0.7);}
+  button.satan-btn{border-color:#a00020;color:#ff4060;background:linear-gradient(180deg,#2a0008,#0a0004);}
+  button.satan-btn:hover{border-color:#ff0040;color:#ff6080;box-shadow:0 0 30px rgba(255,0,64,0.8);transform:scale(1.02);}
+  .choices{display:flex;flex-direction:column;gap:6px;margin-top:14px;}
+  .choices button{text-align:left;padding:14px 20px;font-size:12px;}
+  .choices button::after{content:'›';position:absolute;right:18px;top:50%;transform:translateY(-50%);color:#c0a050;font-size:20px;transition:right 0.25s;}
+  .choices button:hover::after{right:12px;color:#ffd090;}
+  #stats{display:flex;gap:14px;padding:10px 20px;background:linear-gradient(180deg,#050202,#0d0805);border-top:1px solid #4a2a10;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;z-index:3;position:relative;}
+  .stat{flex:1;color:#c0a050;}
+  .stat .bar{height:11px;background:#0a0604;border:1px solid #4a2a1a;margin-top:4px;position:relative;overflow:hidden;}
+  .bar-fill{height:100%;transition:width 0.6s ease-out;position:relative;}
+  .hp .bar-fill{background:linear-gradient(90deg,#500,#c03030 70%,#e05050);}
+  .mana .bar-fill{background:linear-gradient(90deg,#102040,#4080c0 70%,#60a0e0);}
+  .mana-shadow .bar-fill{background:linear-gradient(90deg,#2a0040,#8020a0 70%,#c040e0);}
+  .insanity .bar-fill{background:linear-gradient(90deg,#2a1030,#8020a0 70%,#c040e0);animation:insanityPulse 2s infinite;}
+  @keyframes insanityPulse{0%,100%{filter:brightness(1);}50%{filter:brightness(1.3);}}
+  .bar-text{display:flex;justify-content:space-between;font-size:11px;}
+  .magic-card{background:linear-gradient(180deg,rgba(20,10,5,0.95),rgba(5,2,1,0.95));border:1px solid #6a4a20;padding:24px;margin:14px 0;text-align:center;animation:revealMagic 1.8s ease-out;box-shadow:0 0 40px rgba(120,60,0,0.3),inset 0 0 40px rgba(0,0,0,0.8);}
+  @keyframes revealMagic{0%{opacity:0;transform:scale(0.7) rotate(-5deg);filter:blur(15px);}100%{opacity:1;transform:scale(1) rotate(0);filter:blur(0);}}
+  .rarity-comum{color:#a0a0a0;}
+  .rarity-rara{color:#50c8ff;text-shadow:0 0 12px #4080ff;}
+  .rarity-muito_rara{color:#d080ff;text-shadow:0 0 14px #8020ff;}
+  .rarity-lendaria{color:#ffc050;text-shadow:0 0 20px #ff8000,0 0 40px #a04000;}
+  .rarity-mitica{color:#ff5070;text-shadow:0 0 25px #ff0040,0 0 50px #a00020;animation:titlePulse 1.5s infinite;}
+  .rarity-arcana{color:#ff40ff;text-shadow:0 0 30px #f0f,0 0 60px #a0a;animation:arcanaPulse 1s infinite;}
+  @keyframes arcanaPulse{0%,100%{text-shadow:0 0 30px #f0f,0 0 60px #a0a;}50%{text-shadow:0 0 45px #f0f,0 0 90px #a0a;}}
+  .grimoire-card{background:linear-gradient(135deg,#1a0520,#0a0208);border:2px solid #a040ff;padding:22px;margin:12px 0;text-align:center;animation:revealMagic 1.5s ease-out;box-shadow:0 0 50px rgba(160,64,255,0.5);}
+  .arcana-card{background:linear-gradient(135deg,#2a0020,#0a0008);border:2px solid #ff40ff;padding:25px;margin:12px 0;text-align:center;animation:revealMagic 1.5s ease-out;box-shadow:0 0 60px rgba(255,64,255,0.6);position:relative;overflow:hidden;}
+  .arcana-card::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:conic-gradient(from 0deg,transparent,rgba(255,64,255,0.2),transparent 30%);animation:rotateGlow 4s linear infinite;}
+  @keyframes rotateGlow{to{transform:rotate(360deg);}}
+  .arcana-card>*{position:relative;z-index:1;}
+  .satan-card{background:linear-gradient(135deg,#2a0008,#0a0002);border:2px solid #ff0040;padding:30px;margin:14px 0;text-align:center;animation:revealMagic 1.5s ease-out;box-shadow:0 0 80px rgba(255,0,64,0.7);position:relative;overflow:hidden;}
+  .satan-card::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:conic-gradient(from 0deg,transparent,rgba(255,0,64,0.25),transparent 30%);animation:rotateGlow 3s linear infinite;}
+  .satan-card>*{position:relative;z-index:1;}
+  .combat-arena{display:flex;justify-content:space-around;align-items:center;padding:14px 0;background:radial-gradient(ellipse at center,rgba(80,10,10,0.3) 0%,transparent 70%);border:1px solid #3a1a0a;margin:12px 0;min-height:180px;}
+  .fighter{display:flex;flex-direction:column;align-items:center;gap:8px;}
+  .fighter .name{font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;color:#e0b860;font-weight:600;}
+  .fighter .hp-mini{width:110px;height:8px;background:#0a0604;border:1px solid #3a2a1a;}
+  .fighter .hp-mini div{height:100%;transition:width 0.4s;}
+  .enemy-hp div{background:linear-gradient(90deg,#500,#e05050);}
+  .player-hp div{background:linear-gradient(90deg,#204060,#60a0e0);}
+  .attack-anim{animation:attackLunge 0.35s;}
+  @keyframes attackLunge{0%{transform:translateX(0);}50%{transform:translateX(30px);}100%{transform:translateX(0);}}
+  .hit-anim{animation:hitShake 0.35s;}
+  @keyframes hitShake{0%,100%{transform:translateX(0);filter:brightness(1);}30%{transform:translateX(-10px);filter:brightness(2);}60%{transform:translateX(8px);filter:brightness(1.5);}}
+  .float-dmg{position:absolute;color:#ff5050;font-family:'Cinzel',serif;font-weight:700;font-size:22px;text-shadow:0 0 12px #f00,0 2px 4px #000;animation:floatUp 1s ease-out forwards;pointer-events:none;z-index:10;}
+  @keyframes floatUp{0%{opacity:1;transform:translateY(0) scale(0.8);}100%{opacity:0;transform:translateY(-60px) scale(1.3);}}
+  #combatLog{max-height:95px;overflow-y:auto;background:rgba(0,0,0,0.7);border:1px solid #3a2a1a;padding:8px 12px;font-size:13px;color:#d0c0b0;font-style:italic;margin:8px 0;}
+  #combatLog p{margin-bottom:4px;font-size:13px;line-height:1.4;}
+  .skill-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:12px 0;}
+  .skill-card{background:linear-gradient(180deg,#150a05,#080403);border:1px solid #4a2a10;padding:11px 13px;cursor:pointer;transition:all 0.25s;}
+  .skill-card:hover{border-color:#d0a040;background:linear-gradient(180deg,#251508,#150a05);transform:translateY(-2px);}
+  .skill-card .sk-name{font-family:'Cinzel',serif;font-size:12px;letter-spacing:1px;color:#f0d8a0;margin-bottom:3px;font-weight:600;}
+  .skill-card .sk-cost{font-size:11px;color:#80a0c0;letter-spacing:1px;}
+  .skill-card .sk-desc{font-size:12px;color:#b0a090;font-style:italic;margin-top:4px;line-height:1.35;}
+  .skill-card.locked{opacity:0.4;cursor:not-allowed;filter:grayscale(1);}
+  .skill-card.unlocked{border-color:#a08040;}
+  .skill-card.shadow{border-color:#8020a0;background:linear-gradient(180deg,#200a20,#0a0210);}
+  .skill-card.shadow .sk-name{color:#d080ff;}
+  .flash-red{animation:flashRed 0.5s;}@keyframes flashRed{0%{background:rgba(255,0,0,0.4);}100%{background:transparent;}}
+  .flash-white{animation:flashWhite 0.5s;}@keyframes flashWhite{0%{background:rgba(255,255,255,0.5);}100%{background:transparent;}}
+  .flash-purple{animation:flashPurple 0.6s;}@keyframes flashPurple{0%{background:rgba(160,20,160,0.5);}100%{background:transparent;}}
+  .flash-gold{animation:flashGold 0.6s;}@keyframes flashGold{0%{background:rgba(255,200,50,0.5);}100%{background:transparent;}}
+  .flash-black{animation:flashBlack 1.2s;}@keyframes flashBlack{0%{background:rgba(0,0,0,0.95);}50%{background:rgba(0,0,0,0.7);}100%{background:transparent;}}
+  .flash-crimson{animation:flashCrimson 0.8s;}@keyframes flashCrimson{0%{background:rgba(180,0,30,0.6);}100%{background:transparent;}}
+  .flash-hell{animation:flashHell 1s;}@keyframes flashHell{0%{background:rgba(255,0,40,0.8);}50%{background:rgba(80,0,0,0.9);}100%{background:transparent;}}
+  .blind-effect{animation:blindWobble 0.8s;filter:blur(2px) brightness(1.5) hue-rotate(180deg);}
+  @keyframes blindWobble{0%,100%{transform:translateX(0) rotate(0);}25%{transform:translateX(-5px) rotate(-2deg);}75%{transform:translateX(5px) rotate(2deg);}}
+  .hp-cost-effect{animation:hpCostPulse 0.6s;}
+  @keyframes hpCostPulse{0%,100%{box-shadow:inset 0 0 0 rgba(255,0,0,0);}50%{box-shadow:inset 0 0 60px rgba(255,0,0,0.5);}}
+  .blood-drip{position:absolute;width:2px;height:20px;background:linear-gradient(180deg,#ff0000,#800000);animation:bloodDrip 1.5s ease-out forwards;pointer-events:none;}
+  @keyframes bloodDrip{0%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(80px);}}
+  .shake{animation:shake 0.4s;}@keyframes shake{0%,100%{transform:translate(0,0);}20%{transform:translate(-8px,3px);}40%{transform:translate(6px,-4px);}60%{transform:translate(-5px,2px);}80%{transform:translate(4px,-2px);}}
+  .insanity-effect{animation:insanityWobble 3s infinite;}
+  @keyframes insanityWobble{0%,100%{transform:skew(0deg);}25%{transform:skew(0.3deg);}75%{transform:skew(-0.3deg);}}
+  .pixel-sprite{position:relative;z-index:1;image-rendering:pixelated;filter:contrast(1.1) saturate(1.1);}
+  .village-scene{background:linear-gradient(180deg,#1a0a08 0%,#0a0503 100%);border:1px solid #3a1a0a;padding:20px;margin:10px 0;}
+  .shop-item{display:flex;justify-content:space-between;align-items:center;background:rgba(20,10,5,0.7);border:1px solid #4a2a10;padding:10px 14px;margin:6px 0;}
+  .shop-item:hover{border-color:#d0a040;}
+  .shop-item .item-name{font-family:'Cinzel',serif;font-size:12px;letter-spacing:1px;color:#f0d8a0;font-weight:600;}
+  .shop-item .item-desc{font-size:12px;color:#b0a090;font-style:italic;margin-top:3px;}
+  .shop-item .item-price{font-family:'Cinzel',serif;color:#ffd060;font-size:14px;font-weight:600;}
+  .shop-item button{padding:6px 12px;font-size:10px;margin:0;}
+  .gold-display{font-family:'Cinzel',serif;color:#ffd060;font-size:14px;letter-spacing:2px;text-align:right;margin-bottom:8px;font-weight:600;}
+  .cult-scene{background:linear-gradient(180deg,#2a0010,#0a0004);border:1px solid #a02050;padding:20px;margin:10px 0;}
+  .lore-box{background:rgba(15,8,4,0.9);border-left:3px solid #b8944f;padding:14px 18px;margin:12px 0;font-style:italic;color:#d0c0a0;}
+  .lore-title{font-family:'Cinzel',serif;color:#e0b860;font-size:13px;letter-spacing:3px;margin-bottom:6px;text-transform:uppercase;font-weight:600;}
+  .macabre-npc{background:linear-gradient(180deg,#1a0a05,#050201);border:1px solid #604020;padding:16px;margin:10px 0;}
+  .npc-name{font-family:'Cinzel',serif;color:#c08040;font-size:15px;letter-spacing:2px;margin-bottom:6px;font-weight:600;}
+  .npc-desc{font-size:15px;color:#d0c0b0;font-style:italic;}
+  .dialogue{background:rgba(0,0,0,0.5);border-left:3px solid #e04040;padding:14px 18px;margin:10px 0;}
+  .first-person-active{font-family:'Crimson Text',serif;font-size:18px;color:#e8e0d0;line-height:1.9;}
+  .first-person-active p{font-size:18px;color:#e8e0d0;}
+  .fp-thought{color:#a0c0ff;font-style:italic;padding-left:20px;border-left:2px solid #4080c0;margin:10px 0;}
+  .fp-action{color:#e0c0a0;font-style:italic;}
+  .fp-sensation{color:#ffb070;font-style:italic;}
+  .fp-indicator{display:inline-block;font-family:'Cinzel',serif;font-size:9px;color:#b8944f;border:1px solid #6a4a20;padding:2px 8px;margin-bottom:8px;letter-spacing:2px;}
+  .sys-menu{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin:8px 0;}
+  .sys-menu button{padding:8px 14px;font-size:10px;}
+  .bestiary-entry{background:linear-gradient(180deg,#1a0804,#050201);border:1px solid #6a4a20;padding:14px;margin:8px 0;}
+  .bestiary-name{font-family:'Cinzel',serif;color:#e04040;font-size:16px;letter-spacing:2px;margin-bottom:4px;font-weight:600;}
+  .bestiary-stats{font-size:12px;color:#a09080;margin-bottom:6px;font-style:italic;}
+  .bestiary-desc{font-size:14px;color:#d0c0b0;font-style:italic;}
+  .bestiary-locked{opacity:0.35;filter:grayscale(1);}
+  .achv-toast{position:absolute;top:60px;right:20px;background:linear-gradient(180deg,#2a1a08,#0a0604);border:1px solid #e0b860;padding:12px 18px;box-shadow:0 0 30px rgba(224,184,96,0.6);z-index:100;animation:achvIn 0.5s ease-out;max-width:280px;}
+  @keyframes achvIn{0%{opacity:0;transform:translateX(50px);}100%{opacity:1;transform:translateX(0);}}
+  .achv-toast .achv-title{font-family:'Cinzel',serif;font-size:10px;color:#b8944f;letter-spacing:3px;margin-bottom:4px;text-transform:uppercase;}
+  .achv-toast .achv-name{font-family:'Cinzel',serif;font-size:13px;color:#ffe080;letter-spacing:1px;font-weight:600;}
+  .diary-entry{background:linear-gradient(180deg,#150a05,#080403);border-left:3px solid #b8944f;padding:12px 16px;margin:8px 0;}
+  .diary-title{font-family:'Cinzel',serif;color:#e0b860;font-size:13px;letter-spacing:2px;margin-bottom:4px;font-weight:600;}
+  .diary-text{font-size:14px;color:#c0b0a0;font-style:italic;line-height:1.6;}
+  .map-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0;}
+  .map-cell{background:linear-gradient(180deg,#1a1008,#0a0604);border:1px solid #4a2a10;padding:14px;text-align:center;cursor:pointer;transition:all 0.25s;}
+  .map-cell:hover{border-color:#d0a040;transform:translateY(-2px);}
+  .map-cell.visited{border-color:#60c060;}
+  .map-cell .map-icon{font-size:24px;margin-bottom:6px;}
+  .map-cell .map-name{font-family:'Cinzel',serif;font-size:11px;letter-spacing:1px;color:#f0d8a0;font-weight:600;}
+  .map-cell .map-status{font-size:10px;color:#808080;margin-top:4px;font-style:italic;}
+  .hell-scene{background:linear-gradient(180deg,#2a0008,#0a0002);border:2px solid #800020;padding:24px;margin:14px 0;position:relative;overflow:hidden;box-shadow:0 0 40px rgba(128,0,32,0.4);}
+  .hell-scene::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 100%,rgba(255,0,64,0.2) 0%,transparent 60%);pointer-events:none;}
+  .hell-demon{background:linear-gradient(180deg,#1a0010,#0a0004);border:1px solid #802040;padding:18px;margin:12px 0;position:relative;}
+  .hell-demon.pacted{border-color:#ff0040;box-shadow:0 0 25px rgba(255,0,64,0.5);background:linear-gradient(180deg,#2a0010,#100002);}
+  .hell-demon .hd-icon{font-size:42px;margin-bottom:8px;text-align:center;}
+  .hell-demon .hd-name{font-family:'Cinzel',serif;color:#ff5080;font-size:18px;letter-spacing:2px;text-align:center;font-weight:700;margin-bottom:4px;}
+  .hell-demon.pacted .hd-name{color:#ff0040;}
+  .hell-demon .hd-title{color:#c0a0a0;font-style:italic;text-align:center;font-size:14px;margin-bottom:10px;}
+  .hell-demon .hd-desc{color:#d0c0b0;font-size:14px;font-style:italic;line-height:1.6;margin-bottom:10px;}
+  .hell-demon .hd-stats{background:rgba(0,0,0,0.4);border:1px solid #4a2020;padding:8px 12px;margin:8px 0;font-size:13px;}
+  .hell-demon .hd-bonus{color:#60c060;font-weight:600;}
+  .hell-demon .hd-curse{color:#ff6060;font-weight:600;}
+  .hell-demon .hd-pacted-mark{position:absolute;top:12px;right:16px;color:#ff0040;font-size:24px;text-shadow:0 0 15px #f00;animation:titlePulse 2s infinite;}
+  .satan-power-bar{background:linear-gradient(90deg,#1a0004,#400010,#800020,#ff0040);height:16px;border:1px solid #ff0040;margin:8px 0;position:relative;box-shadow:0 0 15px rgba(255,0,64,0.5);}
+  .satan-power-fill{height:100%;background:linear-gradient(90deg,#400010,#ff0040);transition:width 0.8s;box-shadow:0 0 20px #ff0040;}
+  .satan-power-text{text-align:center;font-family:'Cinzel',serif;color:#ff5080;font-size:12px;letter-spacing:2px;margin-bottom:6px;font-weight:600;}
+  /* Menu inicial */
+  #titleScreen{position:absolute;inset:0;background:radial-gradient(ellipse at center,#1a0a0a 0%,#000 80%);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:50;padding:40px;}
+  #titleScreen h1{font-size:72px;margin-bottom:8px;}
+  #titleScreen .subtitle{color:#b8944f;letter-spacing:8px;font-size:14px;margin-bottom:50px;font-family:'Cinzel',serif;}
+  #titleScreen .menu-btn{width:320px;margin:6px;padding:16px 24px;font-size:14px;letter-spacing:3px;}
+  #titleScreen .version{position:absolute;bottom:20px;right:24px;color:#6a5a3a;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;}
+  #titleScreen .credit{position:absolute;bottom:20px;left:24px;color:#6a5a3a;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;}
+  @media(max-width:900px){
+    #game{width:100vw;height:100vh;border:none;}
+    #sidePanel{display:none;}
+    #screen{padding:16px 20px;}
+    h1{font-size:36px;}
+    #titleScreen h1{font-size:48px;}
+    #titleScreen .menu-btn{width:260px;font-size:12px;}
+  }
+</style>
+</head>
+<body>
+<div id="game">
+  <!-- TELA INICIAL -->
+  <div id="titleScreen">
+    <h1>ALASTOR</h1>
+    <p class="subtitle">O HERDEIRO DAS CINZAS</p>
+    <button class="menu-btn" onclick="startNewGame()">▶ NOVO JOGO</button>
+    <button class="menu-btn" id="continueBtn" onclick="continueGame()" style="display:none;">↻ CONTINUAR</button>
+    <button class="menu-btn" onclick="showAbout()">📖 SOBRE</button>
+    <button class="menu-btn" onclick="window.open('https://github.com/SEU-USUARIO/alastor-rpg','_blank')">⭐ GITHUB</button>
+    <div class="credit">v10.0 — MIT License</div>
+    <div class="version">Feito com HTML/CSS/JS</div>
+  </div>
+
+  <div id="header">
+    <span id="location">— Prólogo —</span>
+    <span id="chapter">Cap. 0</span>
+    <span id="age">Idade: 0</span>
+    <span id="magic">Magia: ???</span>
+    <span id="gold">Ouro: 0</span>
+  </div>
+  <div id="main">
+    <div id="screen"></div>
+    <div id="sidePanel">
+      <div class="panel-title">ALASTOR</div>
+      <div class="sprite-frame" id="spriteFrame"></div>
+      <div class="panel-title">ATRIBUTOS</div>
+      <div class="attr-row"><span>FORÇA</span><span class="val" id="attrStr">1</span></div>
+      <div class="attr-row"><span>INTELIGÊNCIA</span><span class="val" id="attrInt">1</span></div>
+      <div class="attr-row"><span>DEFESA</span><span class="val" id="attrDef">1</span></div>
+      <div class="attr-row"><span>MANA MÁX.</span><span class="val" id="attrMana">100</span></div>
+      <div class="attr-row"><span>LOUCURA</span><span class="val" id="attrMad">0%</span></div>
+      <div class="attr-row"><span>ALMAS</span><span class="val" id="attrSouls">0</span></div>
+      <div class="attr-row"><span>GRIMÓRIOS</span><span class="val" id="attrGrim">0</span></div>
+      <div class="attr-row" id="demonCountRow" style="display:none;"><span>DEMÔNIOS</span><span class="val" id="attrDemon" style="color:#ff5080;">0</span></div>
+      <div class="attr-row" id="satanPowerRow" style="display:none;"><span>SATANÁS</span><span class="val" id="attrSatan" style="color:#ff0040;">0%</span></div>
+      <div class="panel-title" id="satellaTitle" style="display:none;">SATELLA</div>
+      <div id="satellaInfo" style="font-size:11px;color:#ffb070;text-align:center;display:none;line-height:1.5;"></div>
+      <div class="panel-title" id="pactTitle" style="display:none;">PACTO</div>
+      <div id="pactInfo" style="font-size:11px;color:#d060ff;text-align:center;display:none;font-weight:600;">✦ Namaroth ✦</div>
+      <div class="panel-title" id="reputTitle" style="display:none;">REPUTAÇÃO</div>
+      <div id="reputInfo" style="font-size:11px;text-align:center;display:none;line-height:1.6;"></div>
+    </div>
+  </div>
+  <div id="stats">
+    <div class="stat hp"><div class="bar-text"><span>VIDA</span><span id="hpVal">100/100</span></div><div class="bar"><div class="bar-fill" id="hpBar" style="width:100%"></div></div></div>
+    <div class="stat mana" id="manaStat"><div class="bar-text"><span>MANA</span><span id="manaVal">100/100</span></div><div class="bar"><div class="bar-fill" id="manaBar" style="width:100%"></div></div></div>
+    <div class="stat insanity"><div class="bar-text"><span>LOUCURA</span><span id="insVal">0%</span></div><div class="bar"><div class="bar-fill" id="insanityBar" style="width:0%"></div></div></div>
+  </div>
+</div>
+
+<script>
+// ==================== ESTADO ====================
+const game = {
+  age:0, hp:100, hpMax:100, mana:100, manaMax:100, insanity:0,
+  magic:null, magicRarity:null, hasPact:false,
+  flags:{}, str:1, int:1, def:1, skills:[],
+  gold:50, souls:0, reputation:0, hasMana:true,
+  deityKills:0, inventory:[],
+  grimoires:0, cultJoined:false,
+  godsDefeated:[], arcanaUnlocked:false,
+  loreFound:[], macabreNpcsMet:[],
+  satellaTrust:50, satellaRevealed:false, satellaRebellion:false, satellaDead:false,
+  achievements:[], bestiary:[], visitedMap:[], namarothDefeated:false,
+  soundOn:true, 
+  demonPacts:[], satanPower:0, voidRoute:false, hellUnlocked:false
+};
+
+const screen = document.getElementById('screen');
+const locationEl = document.getElementById('location');
+const ageEl = document.getElementById('age');
+const magicEl = document.getElementById('magic');
+const chapterEl = document.getElementById('chapter');
+const goldEl = document.getElementById('gold');
+
+// ==================== ÁUDIO ====================
+let audioCtx = null;
+function initAudio(){if(!audioCtx){try{audioCtx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}if(audioCtx&&audioCtx.state==='suspended'){audioCtx.resume();}}
+function playTone(freq,duration,type='sine',volume=0.08){if(!game.soundOn||!audioCtx)return;try{const osc=audioCtx.createOscillator();const gain=audioCtx.createGain();osc.type=type;osc.frequency.value=freq;gain.gain.setValueAtTime(volume,audioCtx.currentTime);gain.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+duration);osc.connect(gain);gain.connect(audioCtx.destination);osc.start();osc.stop(audioCtx.currentTime+duration);}catch(e){}}
+function sfxClick(){playTone(440,0.08,'triangle',0.05);}
+function sfxDamage(){playTone(180,0.15,'sawtooth',0.12);setTimeout(()=>playTone(120,0.2,'sawtooth',0.08),80);}
+function sfxVictory(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone(f,0.25,'sine',0.1),i*120));}
+function sfxMagic(){[400,600,800,1000].forEach((f,i)=>setTimeout(()=>playTone(f,0.1,'triangle',0.08),i*50));}
+function sfxWhisper(){playTone(150,0.6,'sine',0.04);setTimeout(()=>playTone(200,0.4,'sine',0.03),300);}
+function sfxGod(){[220,277,330,440].forEach((f,i)=>setTimeout(()=>playTone(f,0.5,'sine',0.1),i*150));}
+function sfxDark(){[100,80,60].forEach((f,i)=>setTimeout(()=>playTone(f,0.4,'sawtooth',0.1),i*200));}
+function sfxHell(){[60,80,100,120,140,160,180].forEach((f,i)=>setTimeout(()=>playTone(f,0.3,'sawtooth',0.15),i*100));}
+function sfxPact(){[200,300,400,500,600].forEach((f,i)=>setTimeout(()=>playTone(f,0.2,'square',0.1),i*80));}
+
+// ==================== SAVE ====================
+const SAVE_KEY='alastor_save_v10';
+function saveGame(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(game));updateContinueButton();}catch(e){}}
+function loadGame(){try{const s=localStorage.getItem(SAVE_KEY);if(!s)return false;Object.assign(game,JSON.parse(s));return true;}catch(e){return false;}}
+function hasSave(){try{return !!localStorage.getItem(SAVE_KEY);}catch(e){return false;}}
+function clearSave(){try{localStorage.removeItem(SAVE_KEY);updateContinueButton();}catch(e){}}
+function updateContinueButton(){const btn=document.getElementById('continueBtn');if(btn)btn.style.display=hasSave()?'block':'none';}
+
+// ==================== TELA INICIAL ====================
+function showTitleScreen(){document.getElementById('titleScreen').style.display='flex';updateContinueButton();}
+function hideTitleScreen(){document.getElementById('titleScreen').style.display='none';}
+function startNewGame(){initAudio();sfxClick();clearSave();resetGame();hideTitleScreen();scenePrologo();}
+function continueGame(){initAudio();sfxClick();if(loadGame()){hideTitleScreen();updateStats();if(game.magic)sceneTreino();else if(game.voidRoute)sceneSemMana3();else scenePrologo();}else{startNewGame();}}
+function showAbout(){initAudio();sfxClick();alert('🌑 ALASTOR: O HERDEIRO DAS CINZAS\n\nUm RPG medieval sombrio em HTML/CSS/JS.\n\n• 28 magias\n• 7 pactos demoníacos\n• 13+ finais\n• Save automático\n\nCriado com ❤️ e magia sombria.\n\nVersão 10.0 — MIT License');}
+
+// ==================== CONQUISTAS ====================
+const ACHIEVEMENTS = [
+  {id:'first_pact',name:'O Pacto',desc:'Vendeu sua alma a Namaroth.'},
+  {id:'satella_reveal',name:'A Verdade',desc:'Descobriu que Satella é uma deusa.'},
+  {id:'first_deity',name:'Matador de Deuses',desc:'Matou o Primeiro Deus.'},
+  {id:'all_deities',name:'Deicida',desc:'Matou todos os cinco deuses.'},
+  {id:'arcana',name:'Poder Ancestral',desc:'Desbloqueou uma magia ARCANA.'},
+  {id:'namaroth',name:'O Sexto',desc:'Derrotou Namaroth.'},
+  {id:'true_ending',name:'A Rebelião das Deusas',desc:'Final secreto.'},
+  {id:'no_mana',name:'O Vazio',desc:'Sobreviveu sem mana.'},
+  {id:'all_lore',name:'Escriba',desc:'Todos os 11 fragmentos.'},
+  {id:'first_demon',name:'Primeiro Contrato',desc:'Primeiro pacto com demônio.'},
+  {id:'three_demons',name:'Colecionador',desc:'3 pactos demoníacos.'},
+  {id:'five_demons',name:'Legião',desc:'5 pactos demoníacos.'},
+  {id:'all_demons',name:'OS SETE',desc:'Todos os 7 pactos.'},
+  {id:'full_satan',name:'O NOVO SATANÁS',desc:'Tornou-se o próprio Satanás.'},
+];
+function unlockAchievement(id){if(game.achievements.includes(id))return;game.achievements.push(id);const a=ACHIEVEMENTS.find(x=>x.id===id);if(!a)return;const t=document.createElement('div');t.className='achv-toast';t.innerHTML=`<div class="achv-title">✦ Conquista ✦</div><div class="achv-name">${a.name}</div><div style="font-size:11px;color:#a09080;margin-top:4px;font-style:italic;">${a.desc}</div>`;document.getElementById('game').appendChild(t);setTimeout(()=>t.remove(),3500);sfxVictory();saveGame();}
+
+// ==================== BESTIÁRIO ====================
+const BESTIARY = [
+  {id:'servo',name:'Servo Divino',hp:'90',atk:'14',tier:'Comum',desc:'Criaturas aladas com olhos vazios.'},
+  {id:'multidao',name:'Multidão de Aldeões',hp:'60',atk:'8',tier:'Comum',desc:'Humanos com foices.'},
+  {id:'deus1',name:'O Primeiro Deus',hp:'450',atk:'35',tier:'DEUS',desc:'O Início.'},
+  {id:'deus2',name:'O Segundo Deus',hp:'600',atk:'45',tier:'DEUS',desc:'O Vingador.'},
+  {id:'deus3',name:'O Terceiro Deus',hp:'500',atk:'30',tier:'DEUS',desc:'A Vida.'},
+  {id:'deus4',name:'O Quarto Deus',hp:'700',atk:'50',tier:'DEUS',desc:'O Morto-Vivo.'},
+  {id:'aetheron',name:'Aetheron',hp:'1500',atk:'60',tier:'DEUS',desc:'O Criador.'},
+  {id:'namaroth',name:'Namaroth',hp:'2000',atk:'80',tier:'SECRETO',desc:'O Sexto Deus.'},
+  {id:'belphagor',name:'Belphagor',hp:'—',atk:'—',tier:'DEMÔNIO',desc:'O Preguiçoso.'},
+  {id:'asmodeus',name:'Asmodeus',hp:'—',atk:'—',tier:'DEMÔNIO',desc:'O Luxurioso.'},
+  {id:'mammon',name:'Mammon',hp:'—',atk:'—',tier:'DEMÔNIO',desc:'O Ganancioso.'},
+  {id:'leviathan',name:'Leviathan',hp:'—',atk:'—',tier:'DEMÔNIO',desc:'O Invejoso.'},
+  {id:'beelzebub',name:'Beelzebub',hp:'—',atk:'—',tier:'DEMÔNIO',desc:'O Glutão.'},
+  {id:'lucifer',name:'Lúcifer',hp:'—',atk:'—',tier:'DEMÔNIO',desc:'O Orgulhoso.'},
+  {id:'satan',name:'SATANÁS',hp:'—',atk:'—',tier:'DEMÔNIO',desc:'O Rei do Inferno.'}
+];
+function addToBestiary(id){if(!game.bestiary.includes(id))game.bestiary.push(id);}
+
+// ==================== LORE ====================
+const LORE_FRAGMENTS = [
+  {id:'lore1',titulo:'A Queda dos Primeiros',texto:'Antes dos homens, havia apenas os Cinco.'},
+  {id:'lore2',titulo:'Namaroth',texto:'Namaroth foi o Sexto deus. Aetheron o apagou.'},
+  {id:'lore3',titulo:'Satella',texto:'Satella foi criada por Aetheron.'},
+  {id:'lore4',titulo:'O Vazio',texto:'O Vazio não é um lugar. É um ser.'},
+  {id:'lore5',titulo:'Filhos das Cinzas',texto:'Alastor é o primeiro filho amado.'},
+  {id:'lore6',titulo:'A Sexta Deusa',texto:'A mãe de Alastor era a Sexta Deusa.'},
+  {id:'lore7',titulo:'A Verdade de Satella',texto:'Satella é a Sétima Deusa.'},
+  {id:'lore8',titulo:'O Pacto de Satella',texto:'Satella se rebelou por amor.'},
+  {id:'lore9',titulo:'A Rebelião',texto:'A rebelião das deusas nunca terminou.'},
+  {id:'lore10',titulo:'O Fim de Aetheron',texto:'Só Alastor pode matá-lo.'},
+  {id:'lore11',titulo:'Os Sete Príncipes',texto:'Satanás está morto. Ele espera um sucessor. Alguém que faça pacto com todos os Sete. Alguém como Alastor.'}
+];
+function addLore(id){if(!game.loreFound.includes(id))game.loreFound.push(id);if(game.loreFound.length>=LORE_FRAGMENTS.length)unlockAchievement('all_lore');}
+
+// ==================== DEMÔNIOS ====================
+const DEMONS = [
+  {id:'belphagor',name:'Belphagor',title:'O Preguiçoso',icon:'😴',desc:'Ele te oferece descanso eterno.',bonus:'+20 DEF, +50 HP Máx',curse:'-5 FOR',dialogue:'"Por que lutar? Sente-se. Descanse."',apply:()=>{game.def+=20;game.hpMax+=50;game.hp=game.hpMax;game.str=Math.max(1,game.str-5);}},
+  {id:'asmodeus',name:'Asmodeus',title:'O Luxurioso',icon:'💋',desc:'Ele te oferece prazer infinito.',bonus:'+30 INT, +30 Mana Máx',curse:'-20 HP Máx',dialogue:'"O prazer é a única verdade."',apply:()=>{game.int+=30;game.manaMax+=30;game.mana=game.manaMax;game.hpMax=Math.max(50,game.hpMax-20);game.hp=Math.min(game.hp,game.hpMax);}},
+  {id:'mammon',name:'Mammon',title:'O Ganancioso',icon:'💰',desc:'Ele te oferece ouro infinito.',bonus:'+500 Ouro, +10 Rep',curse:'-10 INT',dialogue:'"Ouro resolve tudo."',apply:()=>{game.gold+=500;game.reputation+=10;game.flags.reputationVisible=true;game.int=Math.max(1,game.int-10);}},
+  {id:'leviathan',name:'Leviathan',title:'O Invejoso',icon:'🐍',desc:'Ele te oferece o que os outros têm.',bonus:'+15 FOR/INT/DEF',curse:'+30 Loucura',dialogue:'"Você quer o que eles têm?"',apply:()=>{game.str+=15;game.int+=15;game.def+=15;game.insanity+=30;}},
+  {id:'beelzebub',name:'Beelzebub',title:'O Glutão',icon:'🪰',desc:'Ele te oferece força bruta.',bonus:'+40 FOR, +200 HP Máx',curse:'+20 Loucura',dialogue:'"Devore tudo. A fome não acaba."',apply:()=>{game.str+=40;game.hpMax+=200;game.hp=game.hpMax;game.insanity+=20;}},
+  {id:'lucifer',name:'Lúcifer',title:'O Orgulhoso',icon:'👑',desc:'Ele te oferece magia suprema.',bonus:'+40 INT, +40 Mana Máx, +2 Grimórios',curse:'-20 Rep',dialogue:'"Magia dos deuses. Mas o orgulho cega."',apply:()=>{game.int+=40;game.manaMax+=40;game.mana=game.manaMax;game.grimoires+=2;game.reputation-=20;game.flags.reputationVisible=true;}},
+  {id:'satan',name:'SATANÁS',title:'O Rei',icon:'🔥',desc:'Ele não faz pactos. Ele faz sucessores.',bonus:'+100 FOR/INT/DEF, +500 HP/Mana',curse:'Perde humanidade',dialogue:'"O trono precisa de um novo Rei."',apply:()=>{game.str+=100;game.int+=100;game.def+=100;game.hpMax+=500;game.hp=game.hpMax;game.manaMax+=500;game.mana=game.manaMax;game.flags.lostHumanity=true;}}
+];
+
+// ==================== MAGIAS ====================
+const MAGIAS = [
+  {nome:'Fogo',raridade:'comum',desc:'Queima tudo.',skills:[{nome:'Faísca',custo:10,dano:18,desc:'Chama explosiva.'},{nome:'Bola de Fogo',custo:20,dano:32,desc:'Esfera incandescente.'},{nome:'Inferno',custo:35,dano:55,desc:'Queima a área.'}]},
+  {nome:'Água',raridade:'comum',desc:'Domina as marés.',skills:[{nome:'Jato de Água',custo:10,dano:15,desc:'Jato pressurizado.'},{nome:'Névoa Densa',custo:15,dano:0,desc:'Reduz precisão.',efeito:'defesa'},{nome:'Corrente Aquosa',custo:25,dano:30,desc:'Prende e fere.'}]},
+  {nome:'Terra',raridade:'comum',desc:'Comanda a pedra.',skills:[{nome:'Pedra',custo:10,dano:16,desc:'Pedra veloz.'},{nome:'Muralha',custo:15,dano:0,desc:'Aumenta defesa.',efeito:'defesa'},{nome:'Fissura',custo:28,dano:40,desc:'O chão se abre.'}]},
+  {nome:'Vento',raridade:'comum',desc:'Lâminas de ar.',skills:[{nome:'Lâmina de Ar',custo:10,dano:17,desc:'Corte invisível.'},{nome:'Ciclone',custo:22,dano:34,desc:'Gira.'},{nome:'Tempestade',custo:38,dano:58,desc:'Ventos destruidores.'}]},
+  {nome:'Sangue',raridade:'comum',desc:'Magia proibida.',skills:[{nome:'Corte Sangrento',custo:8,dano:22,desc:'Custa 8 HP.',efeito:'hp_cost'},{nome:'Chuva Carmesim',custo:20,dano:38,desc:'Sangue cai.'},{nome:'Pacto de Sangue',custo:30,dano:60,desc:'Custa 25 HP.',efeito:'hp_cost'}]},
+  {nome:'Raio',raridade:'rara',desc:'Eletrifica.',skills:[{nome:'Choque',custo:12,dano:22,desc:'Raio rápido.'},{nome:'Corrente Elétrica',custo:22,dano:38,desc:'Encadeia.'},{nome:'Tempestade de Raios',custo:40,dano:62,desc:'O céu se parte.'}]},
+  {nome:'Gelo',raridade:'rara',desc:'Congela.',skills:[{nome:'Estilhaço',custo:12,dano:20,desc:'Fragmentos.'},{nome:'Prisão de Gelo',custo:20,dano:15,desc:'Congela.',efeito:'stun'},{nome:'Nevasca',custo:38,dano:58,desc:'Frio absoluto.'}]},
+  {nome:'Metal',raridade:'rara',desc:'Forja armas.',skills:[{nome:'Lâminas Metálicas',custo:12,dano:24,desc:'Corta.'},{nome:'Armadura de Aço',custo:18,dano:0,desc:'Defesa.',efeito:'defesa'},{nome:'Chuva de Espadas',custo:36,dano:60,desc:'Espadas caem.'}]},
+  {nome:'Planta',raridade:'rara',desc:'Natureza obedece.',skills:[{nome:'Espinhos',custo:10,dano:18,desc:'Perfura.'},{nome:'Vinhas',custo:20,dano:10,desc:'Prende.',efeito:'stun'},{nome:'Bosque Furioso',custo:35,dano:55,desc:'Floresta ataca.'}]},
+  {nome:'Veneno',raridade:'rara',desc:'Corrói a vida.',skills:[{nome:'Gota Ácida',custo:10,dano:12,desc:'Veneno leve.'},{nome:'Névoa Tóxica',custo:22,dano:25,desc:'Envenena.'},{nome:'Decomposição',custo:38,dano:50,desc:'Apodrece.'}]},
+  {nome:'Ilusão',raridade:'rara',desc:'Engana.',skills:[{nome:'Imagem Falsa',custo:10,dano:0,desc:'Evade.',efeito:'evade'},{nome:'Pesadelo',custo:22,dano:30,desc:'Cega.',efeito:'blind'},{nome:'Labirinto',custo:38,dano:55,desc:'Quebra mente.'}]},
+  {nome:'Sonho',raridade:'rara',desc:'Magia dos sonhos.',skills:[{nome:'Sonolência',custo:12,dano:10,desc:'Atordoa.',efeito:'stun'},{nome:'Pesadelo Vivo',custo:24,dano:40,desc:'Sonho vira arma.'},{nome:'Sonho Lúcido',custo:40,dano:0,desc:'Cura 60, custa 15 HP.',efeito:'hp_cost_heal'}]},
+  {nome:'Reflexão',raridade:'muito_rara',desc:'Devolve magias.',skills:[{nome:'Espelho Arcano',custo:15,dano:0,desc:'Reflete.',efeito:'reflect'},{nome:'Prisma',custo:25,dano:35,desc:'Refrata.'},{nome:'Retaliação',custo:40,dano:70,desc:'Devolve dano.'}]},
+  {nome:'Som',raridade:'muito_rara',desc:'Ondas sonoras.',skills:[{nome:'Grito Sônico',custo:12,dano:24,desc:'Onda de choque.'},{nome:'Ressonância',custo:20,dano:35,desc:'Quebra defesas.'},{nome:'Silêncio',custo:35,dano:50,desc:'Silencia.'}]},
+  {nome:'Cor',raridade:'muito_rara',desc:'Distorce percepção.',skills:[{nome:'Explosão Cromática',custo:14,dano:26,desc:'Cega.'},{nome:'Ilusão Cromática',custo:20,dano:0,desc:'Inimigo erra.',efeito:'blind'},{nome:'Espectro',custo:38,dano:62,desc:'Luz caleidoscópica.'}]},
+  {nome:'Necromancia',raridade:'muito_rara',desc:'Magia dos mortos.',skills:[{nome:'Toque da Morte',custo:15,dano:30,desc:'Drena vida.'},{nome:'Levantar Morto',custo:25,dano:0,desc:'Cura 50, custa 20 HP.',efeito:'hp_cost_heal'},{nome:'Exército',custo:45,dano:70,desc:'Mortos atacam.'}]},
+  {nome:'Maldição',raridade:'muito_rara',desc:'Amaldiçoa.',skills:[{nome:'Mau-Olhado',custo:12,dano:20,desc:'Amaldiçoa.',efeito:'blind'},{nome:'Marca da Morte',custo:25,dano:40,desc:'Marca fatal.'},{nome:'Condenação',custo:45,dano:75,desc:'Morte anunciada.'}]},
+  {nome:'Luz',raridade:'lendaria',desc:'Purifica escuridão.',skills:[{nome:'Raio Sagrado',custo:15,dano:30,desc:'Luz que fere.'},{nome:'Cura Radiante',custo:20,dano:0,desc:'Cura 40.',efeito:'heal'},{nome:'Julgamento',custo:45,dano:80,desc:'Pilar divino.'}]},
+  {nome:'Sombra',raridade:'lendaria',desc:'Escuridão primordial.',skills:[{nome:'Tentáculo',custo:12,dano:28,desc:'Perfura.'},{nome:'Passo Sombrio',custo:20,dano:0,desc:'Esquiva.',efeito:'evade'},{nome:'Eclipse',custo:45,dano:85,desc:'Escuridão total.'}]},
+  {nome:'Gravidade',raridade:'lendaria',desc:'Controla peso.',skills:[{nome:'Peso Esmagador',custo:15,dano:32,desc:'Esmaga.'},{nome:'Campo Gravitacional',custo:25,dano:0,desc:'Reduz dano.',efeito:'defesa'},{nome:'Colapso Estelar',custo:48,dano:90,desc:'Estrela morre.'}]},
+  {nome:'Luar',raridade:'lendaria',desc:'Poder da lua.',skills:[{nome:'Raio de Luar',custo:15,dano:30,desc:'Prata que fere.'},{nome:'Bênção Lunar',custo:22,dano:0,desc:'Cura 30.',efeito:'heal'},{nome:'Eclipse Lunar',custo:45,dano:82,desc:'Lado oculto.'}]},
+  {nome:'Parar o Tempo',raridade:'mitica',desc:'O tempo é seu.',skills:[{nome:'Congelar',custo:20,dano:0,desc:'Inimigo perde turno.',efeito:'stun'},{nome:'Aceleração',custo:25,dano:0,desc:'Age 2x.',efeito:'haste'},{nome:'Colapso Temporal',custo:55,dano:120,desc:'Tempo rasga.'}]},
+  {nome:'Distorção',raridade:'mitica',desc:'Rasga a realidade.',skills:[{nome:'Corte Espacial',custo:18,dano:40,desc:'Corta o espaço.'},{nome:'Portal',custo:25,dano:0,desc:'Redireciona.',efeito:'reflect'},{nome:'Colapso Dimensional',custo:58,dano:130,desc:'Espaço colapsa.'}]},
+  {nome:'Feitiçaria Arcana',raridade:'arcana',desc:'Magia dos antigos.',skills:[{nome:'Sigilo Arcano',custo:15,dano:35,desc:'Sigilo que queima.'},{nome:'Olho do Vazio',custo:25,dano:0,desc:'Vê tudo.',efeito:'evade'},{nome:'Palavra de Poder',custo:50,dano:110,desc:'Uma palavra. Fim.'}]},
+  {nome:'Caos Primordial',raridade:'arcana',desc:'Caos primordial.',skills:[{nome:'Ruptura Caótica',custo:20,dano:45,desc:'Rasga realidade.'},{nome:'Distorção Mental',custo:30,dano:0,desc:'Cega.',efeito:'blind'},{nome:'Apocalipse',custo:60,dano:150,desc:'O fim.'}]},
+];
+function rarityLabel(r){return{comum:'Comum',rara:'Rara',muito_rara:'Muito Rara',lendaria:'Lendária',mitica:'Mítica',arcana:'✦ ARCANA ✦'}[r];}
+function rarityClass(r){return'rarity-'+r.replace('_','-');}
+function rollMagic(){const r=Math.random()*100;let pool;if(r<50)pool=MAGIAS.filter(m=>m.raridade==='comum');else if(r<80)pool=MAGIAS.filter(m=>m.raridade==='rara');else if(r<92)pool=MAGIAS.filter(m=>m.raridade==='muito_rara');else if(r<98)pool=MAGIAS.filter(m=>m.raridade==='lendaria');else pool=MAGIAS.filter(m=>m.raridade==='mitica');return pool[Math.floor(Math.random()*pool.length)];}
+function rollArcana(){return MAGIAS.filter(m=>m.raridade==='arcana')[Math.floor(Math.random()*2)];}
+
+// ==================== CORROMPER MAGIA ====================
+function corruptMagic(){
+  if(!game.magic)return;
+  const darkNames={'Água':'Água de Sangue','Fogo':'Fogo Infernal','Terra':'Terra Amaldiçoada','Vento':'Vento Uivante','Sangue':'Sangue Puro','Raio':'Raio Sombrio','Gelo':'Gelo Negro','Metal':'Metal Corrompido','Planta':'Planta Carnívora','Veneno':'Veneno Puro','Ilusão':'Ilusão Demoníaca','Sonho':'Pesadelo','Reflexão':'Reflexo Demoníaco','Som':'Grito Infernal','Cor':'Cor do Vazio','Necromancia':'Necromancia Pura','Maldição':'Condenação','Luz':'Luz Negra','Sombra':'Sombra Primordial','Gravidade':'Gravidade Mortal','Luar':'Luar Sangrento','Parar o Tempo':'Tempo Parado Sombrio','Distorção':'Distorção Sombria','Feitiçaria Arcana':'Feitiçaria Sombria','Caos Primordial':'Caos Sombrio'};
+  game.magic.nome=darkNames[game.magic.nome]||game.magic.nome+' Sombrio';
+}
+
+// ==================== SPRITE ====================
+function updateSprite(){
+  const frame=document.getElementById('spriteFrame');
+  const s=3;
+  const isSatan=game.satanPower>=100;
+  const eyeColor=isSatan?'#ff0040':(game.hasPact?'#d060ff':(game.insanity>=85?'#ff0000':(game.flags.angelForm?'#ffe080':'#60c0ff')));
+  const skinColor=isSatan?'#8a0010':(game.hasPact?'#b090a0':'#d8b090');
+  const skinShadow=isSatan?'#500008':(game.hasPact?'#806080':'#a07850');
+  const hairColor=isSatan?'#000000':(game.insanity>=60?'#1a0505':(game.flags.angelForm?'#f0e0c0':'#1a0a0a'));
+  const robeColor=isSatan?'#1a0004':(game.hasPact?'#2a0a2a':(game.flags.angelForm?'#e0e0f0':'#3a2010'));
+  const robeDark=isSatan?'#0a0002':(game.hasPact?'#150515':(game.flags.angelForm?'#a0a0c0':'#1a0804'));
+  const aura=isSatan?'rgba(255,0,64,0.7)':(game.hasPact?'rgba(180,48,180,0.5)':(game.flags.angelForm?'rgba(255,240,160,0.5)':'rgba(160,40,40,0.3)'));
+  let html=`<div class="pixel-sprite" style="width:${30*s}px;height:${45*s}px;position:relative;">`;
+  html+=`<div style="position:absolute;inset:-10px;border-radius:50%;background:radial-gradient(circle,${aura} 0%,transparent 70%);animation:auraPulse 3s infinite;pointer-events:none;"></div>`;
+  if(isSatan){
+    html+=`<div style="position:absolute;left:-${10*s}px;top:${10*s}px;width:${10*s}px;height:${22*s}px;background:linear-gradient(135deg,#400008,#ff0040);clip-path:polygon(100% 0,0 40%,30% 60%,0 100%,100% 80%);box-shadow:0 0 25px #ff0040;"></div>`;
+    html+=`<div style="position:absolute;right:-${10*s}px;top:${10*s}px;width:${10*s}px;height:${22*s}px;background:linear-gradient(225deg,#400008,#ff0040);clip-path:polygon(0 0,100% 40%,70% 60%,100% 100%,0 80%);box-shadow:0 0 25px #ff0040;"></div>`;
+  } else if(game.hasPact||game.flags.angelForm){
+    const wc=game.hasPact?'#2a1030':'#f0f0ff';const we=game.hasPact?'#6a2a6a':'#d0d0f0';
+    html+=`<div style="position:absolute;left:-${8*s}px;top:${12*s}px;width:${8*s}px;height:${18*s}px;background:linear-gradient(135deg,${wc},${we});clip-path:polygon(100% 0,0 40%,30% 60%,0 100%,100% 80%);"></div>`;
+    html+=`<div style="position:absolute;right:-${8*s}px;top:${12*s}px;width:${8*s}px;height:${18*s}px;background:linear-gradient(225deg,${wc},${we});clip-path:polygon(0 0,100% 40%,70% 60%,100% 100%,0 80%);"></div>`;
+  }
+  if(isSatan){
+    html+=`<div style="position:absolute;left:50%;top:-8px;transform:translateX(-50%);width:${16*s}px;height:${4*s}px;background:linear-gradient(180deg,#ff0040,#800020);clip-path:polygon(0 100%,0 40%,15% 40%,15% 0,30% 40%,45% 0,60% 40%,75% 0,90% 40%,100% 40%,100% 100%);"></div>`;
+  } else if(game.hasPact||game.flags.angelForm){
+    const hc=game.hasPact?'#c0a060':'#ffe080';
+    html+=`<div style="position:absolute;left:50%;top:-8px;transform:translateX(-50%);width:${14*s}px;height:${2*s}px;border:2px solid ${hc};border-bottom:none;border-radius:50% 50% 0 0;opacity:0.9;"></div>`;
+  }
+  if(game.hasPact||game.insanity>=60||isSatan){
+    const hc=isSatan?'#ff0040':(game.hasPact?'#6a1a6a':'#801010');
+    html+=`<div style="position:absolute;left:${9*s}px;top:${4*s}px;width:${2*s}px;height:${6*s}px;background:linear-gradient(180deg,${hc},#100);clip-path:polygon(50% 0,100% 100%,0 100%);transform:rotate(-15deg);"></div>`;
+    html+=`<div style="position:absolute;right:${9*s}px;top:${4*s}px;width:${2*s}px;height:${6*s}px;background:linear-gradient(180deg,${hc},#100);clip-path:polygon(50% 0,100% 100%,0 100%);transform:rotate(15deg);"></div>`;
+  }
+  html+=`<div style="position:absolute;left:${9*s}px;top:${6*s}px;width:${10*s}px;height:${10*s}px;background:${skinColor};box-shadow:inset -${s}px -${s}px ${s*2}px ${skinShadow};"></div>`;
+  html+=`<div style="position:absolute;left:${8*s}px;top:${3*s}px;width:${12*s}px;height:${6*s}px;background:${hairColor};clip-path:polygon(0 100%,0 30%,20% 0,80% 0,100% 30%,100% 100%,80% 70%,60% 100%,40% 70%,20% 100%);"></div>`;
+  html+=`<div style="position:absolute;left:${11*s}px;top:${9*s}px;width:${2*s}px;height:${2*s}px;background:${eyeColor};box-shadow:0 0 ${s}px ${eyeColor};"></div>`;
+  html+=`<div style="position:absolute;left:${15*s}px;top:${9*s}px;width:${2*s}px;height:${2*s}px;background:${eyeColor};box-shadow:0 0 ${s}px ${eyeColor};"></div>`;
+  html+=`<div style="position:absolute;left:${13*s}px;top:${13*s}px;width:${3*s}px;height:${s*0.5}px;background:${skinShadow};"></div>`;
+  html+=`<div style="position:absolute;left:${9*s}px;top:${16*s}px;width:${10*s}px;height:${14*s}px;background:${robeColor};"></div>`;
+  html+=`<div style="position:absolute;left:${6*s}px;top:${15*s}px;width:${16*s}px;height:${22*s}px;background:linear-gradient(180deg,transparent 0%,${robeDark} 40%,rgba(10,2,2,0.95) 100%);clip-path:polygon(30% 0,70% 0,100% 30%,95% 100%,5% 100%,0 30%);"></div>`;
+  html+=`<div style="position:absolute;left:${10*s}px;top:${29*s}px;width:${4*s}px;height:${10*s}px;background:linear-gradient(180deg,${robeDark},#0a0202);"></div>`;
+  html+=`<div style="position:absolute;right:${10*s}px;top:${29*s}px;width:${4*s}px;height:${10*s}px;background:linear-gradient(180deg,${robeDark},#0a0202);"></div>`;
+  html+='</div>';
+  frame.innerHTML=html;
+}
+
+function updateStats(){
+  document.getElementById('hpBar').style.width=Math.max(0,(game.hp/game.hpMax)*100)+'%';
+  document.getElementById('hpVal').textContent=Math.max(0,Math.floor(game.hp))+'/'+game.hpMax;
+  document.getElementById('manaBar').style.width=Math.max(0,(game.mana/game.manaMax)*100)+'%';
+  document.getElementById('manaVal').textContent=Math.floor(game.mana)+'/'+game.manaMax;
+  document.getElementById('insanityBar').style.width=Math.min(100,game.insanity)+'%';
+  document.getElementById('insVal').textContent=Math.floor(game.insanity)+'%';
+  document.getElementById('attrStr').textContent=game.str;
+  document.getElementById('attrInt').textContent=game.int;
+  document.getElementById('attrDef').textContent=game.def;
+  document.getElementById('attrMana').textContent=game.manaMax;
+  document.getElementById('attrMad').textContent=Math.floor(game.insanity)+'%';
+  document.getElementById('attrSouls').textContent=game.souls;
+  document.getElementById('attrGrim').textContent=game.grimoires;
+  document.getElementById('manaStat').classList.toggle('mana-shadow',game.hasPact);
+  const dcRow=document.getElementById('demonCountRow');
+  const satanRow=document.getElementById('satanPowerRow');
+  if(game.demonPacts.length>0||game.voidRoute){dcRow.style.display='flex';document.getElementById('attrDemon').textContent=game.demonPacts.length+'/7';satanRow.style.display='flex';document.getElementById('attrSatan').textContent=Math.floor(game.satanPower)+'%';}else{dcRow.style.display='none';satanRow.style.display='none';}
+  ageEl.textContent='Idade: '+game.age;
+  magicEl.textContent='Magia: '+(game.magic?(game.hasPact?game.magic.nome+' (Sombria)':game.magic.nome):(game.hasMana?'???':'SEM MANA'));
+  goldEl.textContent='Ouro: '+game.gold;
+  const st=document.getElementById('satellaTitle'),si=document.getElementById('satellaInfo');
+  if(game.flags.satellaVisible){st.style.display='block';si.style.display='block';let status='Escondida',color='#ffb070';if(game.satellaRevealed){status='DEUSA';color='#ffe080';}if(game.satellaRebellion){status='REBELDE';color='#ff60a0';}if(game.satellaDead){status='MORTA';color='#808080';}si.innerHTML=`<span style="color:${color};font-family:Cinzel;letter-spacing:2px;">${status}</span><br><span style="color:#a08060;">Confiança: ${game.satellaTrust}/100</span>`;}
+  document.getElementById('pactTitle').style.display=game.hasPact?'block':'none';
+  document.getElementById('pactInfo').style.display=game.hasPact?'block':'none';
+  const rt=document.getElementById('reputTitle'),ri=document.getElementById('reputInfo');
+  if(game.flags.reputationVisible){rt.style.display='block';ri.style.display='block';const r=game.reputation;let label='Neutro',color='#c0b0a0';if(r>=100){label='LENDA VIVA';color='#ffd700';}else if(r>=50){label='HERÓI';color='#60c060';}else if(r>=20){label='Respeitado';color='#90d090';}else if(r<=-50){label='ODIADO';color='#e04040';}else if(r<=-20){label='Temido';color='#e07050';}ri.innerHTML=`<span style="color:${color};font-family:Cinzel;letter-spacing:2px;">${label}</span><br><span style="color:#c0a050;">${r}</span>`;}
+  updateSprite();
+}
+
+function clearScreen(){screen.innerHTML='';}
+function addHTML(html){const d=document.createElement('div');d.innerHTML=html;screen.appendChild(d);setTimeout(()=>{screen.scrollTop=screen.scrollHeight;},50);}
+function addChoices(choices){
+  const div=document.createElement('div');div.className='choices';
+  choices.forEach(c=>{const btn=document.createElement('button');btn.textContent=c.text;if(c.disabled)btn.disabled=true;if(c.cls)btn.className=c.cls;btn.onclick=()=>{initAudio();sfxClick();if(c.action)c.action();};div.appendChild(btn);});
+  screen.appendChild(div);setTimeout(()=>{screen.scrollTop=screen.scrollHeight;},50);
+}
+function setLocation(n){locationEl.textContent='— '+n+' —';}
+function setChapter(n,name){chapterEl.textContent='Cap. '+n+(name?' — '+name:'');}
+function flashScreen(c){const g=document.getElementById('game');g.classList.add(c);setTimeout(()=>g.classList.remove(c),1200);}
+function shakeScreen(){const g=document.getElementById('game');g.classList.add('shake');setTimeout(()=>g.classList.remove('shake'),400);}
+function addInsanity(v){game.insanity=Math.min(100,game.insanity+v);updateStats();if(game.insanity>=75){document.getElementById('game').classList.add('insanity-effect');}}
+function changeReputation(v){game.reputation+=v;game.flags.reputationVisible=true;updateStats();}
+function addSatellaTrust(v){game.satellaTrust=Math.max(0,Math.min(100,game.satellaTrust+v));updateStats();}
+
+// ==================== SISTEMA DE PACTOS CORRIGIDO ====================
+function recalcSatanPower(){game.satanPower=Math.min(100,game.demonPacts.length*14+(game.hasPact?2:0));updateStats();if(game.satanPower>=100)unlockAchievement('full_satan');}
+function makeDemonPact(demonId){
+  const d=DEMONS.find(x=>x.id===demonId);
+  if(!d)return;
+  if(game.demonPacts.includes(demonId))return;
+  try{d.apply();}catch(e){console.error('Erro:',e);}
+  game.demonPacts.push(demonId);
+  addToBestiary(demonId);
+  recalcSatanPower();
+  if(game.demonPacts.length===1)unlockAchievement('first_demon');
+  if(game.demonPacts.length===3)unlockAchievement('three_demons');
+  if(game.demonPacts.length===5)unlockAchievement('five_demons');
+  if(game.demonPacts.length===7)unlockAchievement('all_demons');
+  sfxPact();flashScreen('flash-hell');shakeScreen();
+  updateStats();saveGame();
+  clearScreen();setLocation('Pacto Feito');
+  addHTML(`<h2 style="text-align:center;color:#ff5080;">✦ PACTO FEITO ✦</h2>
+    <div class="satan-card">
+      <p style="color:#ff0040;font-size:32px;font-family:'UnifrakturMaguntia',serif;letter-spacing:4px;margin-bottom:12px;">${d.icon} ${d.name.toUpperCase()}</p>
+      <p style="color:#d0c0b0;font-style:italic;font-size:16px;line-height:1.7;">"${d.dialogue}"</p>
+      <div style="margin-top:16px;padding:12px;background:rgba(0,0,0,0.4);border:1px solid #4a2020;">
+        <p class="loot" style="margin:6px 0;">✦ ${d.bonus}</p>
+        <p style="color:#ff6060;font-weight:600;margin:6px 0;">⚠ ${d.curse}</p>
+      </div>
+      <p class="satan" style="margin-top:16px;font-size:20px;">Poder de Satanás: ${game.satanPower}%</p>
+      <p style="color:#a09080;margin-top:8px;">${game.demonPacts.length}/7 pactos</p>
+    </div>`);
+  addChoices([{text:'▶ Voltar ao Inferno',action:sceneInferno}]);
+}
+
+function sceneInferno(){
+  clearScreen();setLocation('O Inferno');setChapter('∞','Os Sete Círculos');sfxHell();
+  addHTML(`<h1 style="color:#ff0040;font-size:42px;">O INFERNO</h1>
+    <p class="narration" style="text-align:center;color:#c0a0a0;">"Sete círculos. Sete pactos. Um trono."</p>
+    <div class="satan-power-text">PODER DE SATANÁS</div>
+    <div class="satan-power-bar"><div class="satan-power-fill" style="width:${game.satanPower}%"></div></div>
+    <p style="text-align:center;color:#ff5080;font-family:Cinzel;font-size:14px;letter-spacing:2px;">${game.satanPower}/100</p>`);
+  const container=document.createElement('div');
+  DEMONS.forEach(d=>{
+    const pacted=game.demonPacts.includes(d.id);
+    const div=document.createElement('div');
+    div.className='hell-demon'+(pacted?' pacted':'');
+    div.innerHTML=`${pacted?'<div class="hd-pacted-mark">✦</div>':''}<div class="hd-icon">${d.icon}</div><div class="hd-name">${d.name.toUpperCase()}</div><div class="hd-title">${d.title}</div><div class="hd-desc">${d.desc}</div><div class="hd-stats"><p class="hd-bonus" style="margin:4px 0;">✦ ${d.bonus}</p><p class="hd-curse" style="margin:4px 0;">⚠ ${d.curse}</p></div>${pacted?'<p style="text-align:center;color:#ff0040;font-family:Cinzel;font-size:12px;letter-spacing:3px;margin-top:8px;">✦ PACTO SELADO ✦</p>':''}`;
+    if(!pacted){const btn=document.createElement('button');btn.textContent='🔥 Fazer Pacto com '+d.name;btn.className='demon-btn';btn.style.width='100%';btn.style.marginTop='10px';btn.onclick=()=>{initAudio();sfxClick();sceneDemonConfirm(d.id);};div.appendChild(btn);}
+    container.appendChild(div);
+  });
+  screen.appendChild(container);
+  if(game.demonPacts.length>=7){
+    addHTML(`<div class="satan-card" style="margin-top:20px;"><p class="satan" style="font-size:28px;letter-spacing:6px;">✦ TODOS OS SETE ✦</p><p style="color:#d0c0b0;font-style:italic;margin-top:12px;">O trono te espera.</p></div>`);
+    addChoices([{text:'👑 RECLAMAR O TRONO DE SATANÁS',action:sceneFinalSatan,cls:'satan-btn'},{text:'◀ Sair do Inferno',action:sceneSemMana3}]);
+  } else {
+    addChoices([{text:'◀ Sair do Inferno',action:sceneSemMana3},{text:'⚔ Ir enfrentar o Segundo Deus',action:sceneSegundoDeusVazio,cls:'danger'}]);
+  }
+}
+function sceneDemonConfirm(demonId){
+  const d=DEMONS.find(x=>x.id===demonId);if(!d)return;
+  clearScreen();setLocation('Pacto');setChapter('∞',d.name);sfxHell();
+  addHTML(`<h1 style="color:#ff0040;font-size:38px;">${d.icon} ${d.name.toUpperCase()}</h1>
+    <p style="text-align:center;color:#ff5080;font-family:Cinzel;letter-spacing:3px;font-size:14px;">${d.title}</p>
+    <div class="hell-scene"><p style="color:#e0d0d0;font-style:italic;font-size:18px;line-height:1.8;">"${d.dialogue}"</p></div>
+    <div style="background:rgba(0,0,0,0.5);border:1px solid #802040;padding:16px;margin:16px 0;">
+      <p class="loot" style="margin:8px 0;">✦ BÔNUS: ${d.bonus}</p>
+      <p style="color:#ff6060;font-weight:600;margin:8px 0;">⚠ MALDIÇÃO: ${d.curse}</p>
+    </div>
+    <p class="narration" style="text-align:center;color:#ff5080;font-style:italic;">"Aceita o pacto?"</p>`);
+  addChoices([{text:'🔥 SIM — FAZER PACTO',action:()=>makeDemonPact(demonId),cls:'satan-btn'},{text:'◀ NÃO — RECUAR',action:sceneInferno}]);
+}
+
+// ==================== PRÓLOGO ====================
+function scenePrologo(){
+  setChapter(0,'Prólogo');setLocation('Vila em Ruínas');
+  game.age=0;updateStats();clearScreen();sfxWhisper();
+  addHTML(`<h1>ALASTOR</h1>
+    <p style="text-align:center;color:#b8944f;letter-spacing:6px;margin-bottom:25px;font-size:14px;">O HERDEIRO DAS CINZAS</p>
+    <div class="fp-indicator">◆ PRIMEIRA PESSOA ◆</div>
+    <div class="first-person-active">
+      <p class="fp-sensation">Sinto o frio antes de sentir qualquer outra coisa.</p>
+      <p class="satella" style="color:#ff8090;">"Alastor... meu filho... o mundo... quebrou... mas você... você ainda pode... quebrá-lo de volta..."</p>
+      <p class="narration">Com suas últimas forças, ela escreve em suas costas — com o próprio sangue — o nome: <b style="color:#e04040;font-size:20px;">ALASTOR</b>.</p>
+    </div>`);
+  addChoices([{text:'▶ Engatinhar',action:()=>{if(Math.random()<0.12){game.hasMana=false;game.voidRoute=true;sceneSemMana();}else{sceneSatella();}}},{text:'⚙ Menu',action:openSysMenu}]);
+}
+function sceneSemMana(){
+  setLocation('Vila em Ruínas');clearScreen();flashScreen('flash-black');sfxDark();
+  addHTML(`<div class="first-person-active"><p class="fp-action">Eu engatinho. Mas sinto um vazio.</p><p class="satella">"Sem mana? Você é um vaso vazio. Inútil."</p><p class="narrator" style="color:#c0a060;">"Vem, pequeno. Caddok vai cuidar de você."</p></div>
+    <div class="lore-box"><div class="lore-title">✦ ROTA DO VAZIO ✦</div><p class="narrator" style="margin:0;">Sem mana, mas com pactos. Você pode se tornar o próprio Satanás.</p></div>`);
+  game.flags.semManaRoute=true;game.voidRoute=true;addLore('lore11');updateStats();
+  addChoices([{text:'▶ Seguir Caddok',action:()=>{game.age=5;updateStats();sceneSemMana1();}}]);
+}
+function sceneSemMana1(){
+  setChapter(1,'5 Anos');setLocation('Vila Abandonada');
+  game.age=5;game.str=3;game.int=4;game.def=3;game.hp=80;game.hpMax=80;game.manaMax=10;game.mana=10;updateStats();clearScreen();
+  addHTML(`<h2>Rota do Vazio — 5 Anos</h2><div class="first-person-active"><p class="narrator" style="color:#c0a060;">"Você não tem mana, garoto. Mas tem olhos."</p></div>`);
+  addChoices([{text:'▶ Continuar',action:()=>{game.str+=5;game.def+=5;game.int+=3;updateStats();sceneSemMana2();}}]);
+}
+function sceneSemMana2(){
+  game.age=12;game.str=12;game.int=15;game.def=12;game.hpMax=150;game.hp=150;game.manaMax=15;updateStats();
+  setChapter(2,'12 Anos');clearScreen();
+  addHTML(`<h2>Rota do Vazio — 12 Anos</h2><div class="first-person-active"><p class="narrator" style="color:#c0a060;">"Os pactos são verdadeiros. Cuidado com eles."</p></div>`);
+  addChoices([{text:'▶ Partir',action:()=>{game.age=15;game.str+=8;game.int+=5;game.def+=8;game.hpMax=200;game.hp=200;game.manaMax=20;updateStats();sceneSemMana3();}}]);
+}
+function sceneSemMana3(){
+  setChapter(3,'15 Anos');setLocation('Encruzilhada');game.age=15;updateStats();clearScreen();sfxWhisper();
+  addHTML(`<h2>Rota do Vazio — 15 Anos</h2><div class="first-person-active"><p class="demon">"Alastor. Faça pacto comigo. E depois com os outros."</p><p class="alastor">"Quem é Ele?"</p><p class="demon">"Satanás. O Rei. Você pode ser o sucessor."</p></div>`);
+  game.hellUnlocked=true;
+  addChoices([{text:'🔥 Entrar no Inferno',action:sceneInferno,cls:'demon-btn'},{text:'⚔ Enfrentar o Segundo Deus',action:sceneSegundoDeusVazio,cls:'danger'},{text:'⚙ Menu',action:openSysMenu}]);
+}
+
+// ==================== SATELLA ====================
+function sceneSatella(){
+  setLocation('Fora da Casa');clearScreen();sfxWhisper();
+  addHTML(`<div class="first-person-active"><p class="satella">"Ora... um filhote de humanidade... vou te moldar, pequeno."</p></div>`);
+  game.flags.satellaVisible=true;
+  addChoices([{text:'▶ Continuar',action:sceneCap7}]);
+}
+function sceneCap7(){
+  game.age=7;game.hp=100;game.mana=100;game.str=2;game.int=3;game.def=2;updateStats();
+  setChapter(1,'7 Anos');setLocation('Cabana');clearScreen();
+  addHTML(`<h2>Capítulo I — 7 Anos</h2><div class="first-person-active"><p class="satella">"Hoje você vai aprender o primeiro corte."</p></div>`);
+  addChoices([{text:'⚔ Tentar',action:()=>{const ok=Math.random()>0.4;clearScreen();if(ok){addHTML(`<p class="loot">✦ +1 INT</p>`);game.int+=1;}else{addHTML(`<p class="loot">✦ +1 FOR</p>`);game.str+=1;addInsanity(5);}updateStats();addChoices([{text:'▶ Continuar',action:sceneCap10}]);}},{text:'❓ Mãe',action:()=>{clearScreen();addHTML(`<p class="satella">"Ela era minha amiga."</p>`);game.int+=2;addSatellaTrust(5);updateStats();addChoices([{text:'▶ Continuar',action:sceneCap10}]);}},{text:'⚙ Menu',action:openSysMenu}]);
+}
+function sceneCap10(){
+  game.age=10;game.str=4;game.int=6;game.def=3;game.hpMax=120;game.hp=120;game.manaMax=130;game.mana=130;updateStats();
+  setChapter(2,'10 Anos');setLocation('Laboratório');clearScreen();sfxDark();
+  addHTML(`<h2>Capítulo II — 10 Anos</h2><div class="first-person-active"><p class="satella">"Isso vai doer. Muito."</p></div>`);
+  addChoices([{text:'😖 Reclamar',action:()=>{clearScreen();addHTML(`<p class="loot">+2 MANA | +10 LOUCURA</p>`);game.manaMax+=2;addInsanity(10);addSatellaTrust(-5);updateStats();addChoices([{text:'▶ Continuar',action:sceneCap12}]);}},{text:'😶 Agradecer',action:()=>{clearScreen();addHTML(`<p class="loot">✦ AMULETO | +3 INT</p>`);game.int+=3;addSatellaTrust(10);updateStats();addChoices([{text:'▶ Continuar',action:sceneCap12}]);}},{text:'❓ O que você é?',action:()=>{clearScreen();addHTML(`<p class="fp-sensation">Ela congela. Parece... com medo.</p>`);addSatellaTrust(15);addChoices([{text:'▶ Continuar',action:sceneCap12}]);}}]);
+}
+function sceneCap12(){
+  game.age=12;game.str=5;game.int=9;game.def=5;updateStats();
+  setChapter(3,'12 Anos');setLocation('Vila Natal');clearScreen();addLore('lore6');
+  addHTML(`<h2>Capítulo III — 12 Anos</h2><div class="first-person-active"><p class="satella" style="color:#ff8090;">"Há um pentagrama. Não o toque."</p></div>`);
+  addChoices([{text:'▶ Continuar',action:sceneCap15}]);
+}
+function sceneCap15(){
+  game.age=15;game.str=8;game.int=12;game.def=8;game.hpMax=150;game.hp=150;game.manaMax=180;game.mana=180;updateStats();
+  setChapter(4,'15 Anos');setLocation('Catedral');clearScreen();sfxWhisper();
+  addHTML(`<h2>Capítulo IV — 15 Anos</h2><div class="first-person-active"><p class="whisper">"Filho do fim..."</p></div>`);
+  addChoices([{text:'🎲 Rolar',action:()=>{clearScreen();sfxMagic();addHTML('<p style="text-align:center;color:#b8944f;font-size:20px;margin-top:60px;">A CATEDRAL TREME...</p>');setTimeout(()=>{const m=rollMagic();game.magic=m;game.magicRarity=m.raridade;game.skills=m.skills.map((s,i)=>({...s,unlocked:i===0}));updateStats();clearScreen();addHTML(`<div class="magic-card"><p style="color:#b8944f;font-size:12px;">MAGIA CONJURADA</p><h1 class="${rarityClass(m.raridade)}" style="font-size:44px;margin:15px 0;">${m.nome.toUpperCase()}</h1><p class="${rarityClass(m.raridade)}">✦ ${rarityLabel(m.raridade)} ✦</p></div>`);shakeScreen();flashScreen('flash-purple');addChoices([{text:'▶ Continuar',action:sceneTreino}]);},2200);}}]);
+}
+function sceneTreino(){
+  game.age=16;game.str=12;game.int=16;game.def=12;game.hpMax=180;game.hp=180;game.manaMax=220;game.mana=220;updateStats();
+  setChapter(5,'16 Anos');setLocation('Estrada');clearScreen();
+  addHTML(`<h2>Capítulo V — Treino</h2><div class="first-person-active"><p class="satella">"Vá. Explore. Ou morra."</p></div>`);
+  addChoices([
+    {text:'⚔ Treinar',action:sceneTrainSkills},
+    {text:'🏘 Vila',action:sceneVillage},
+    {text:'🌲 Floresta',action:sceneFloresta},
+    {text:'❓ Confrontar Satella',action:sceneSatellaConfront,cls:'satella-btn'},
+    {text:'⚙ Menu',action:openSysMenu}
+  ]);
+}
+function sceneTrainSkills(){
+  setLocation('Treino');clearScreen();
+  addHTML(`<h2>✦ ${game.magic.nome} ✦</h2>${game.hasPact?'<p class="shadow-magic">✦ MAGIA SOMBRIA (+30%) ✦</p>':''}<p>INT: <b class="accent">${game.int}</b></p><div class="skill-grid" id="skillGrid"></div>`);
+  const grid=document.getElementById('skillGrid');
+  game.skills.forEach((s,i)=>{
+    const card=document.createElement('div');
+    card.className='skill-card '+(s.unlocked?'unlocked':(game.int>=5?'':'locked'))+(game.hasPact?' shadow':'');
+    let extra='';if(s.efeito==='blind')extra+=' ☇';if(s.efeito==='hp_cost'||s.efeito==='hp_cost_heal')extra+=' 🩸';
+    card.innerHTML=`<div class="sk-name">${s.nome}</div><div class="sk-cost">${s.custo}m${s.dano>0?' • '+s.dano+'d':''}${extra}</div><div class="sk-desc">${s.desc}</div>${s.unlocked?'<div style="font-size:10px;color:#60c060;">✓</div>':'<div style="font-size:10px;color:#c0a050;">5 INT</div>'}`;
+    if(!s.unlocked&&game.int>=5){card.onclick=()=>{game.int-=5;game.skills[i].unlocked=true;updateStats();sceneTrainSkills();};}
+    grid.appendChild(card);
+  });
+  addChoices([{text:'◀ Voltar',action:sceneTreino},{text:'🌲 Floresta',action:sceneFloresta,cls:'magic-btn'}]);
+}
+function sceneSatellaConfront(){
+  setLocation('Cabana');setChapter(5,'A Verdade');clearScreen();flashScreen('flash-crimson');sfxDark();
+  addHTML(`<h2 style="color:#ffb070;">A Verdade de Satella</h2><div class="first-person-active"><p class="alastor">"Você é a Sétima Deusa. Minha mãe era a Sexta."</p><p class="satella-god">"Como... como você descobriu?"</p></div>`);
+  game.satellaRevealed=true;addLore('lore8');addLore('lore9');unlockAchievement('satella_reveal');
+  addChoices([
+    {text:'🤝 Perdoar',action:()=>{addSatellaTrust(30);game.satellaRebellion=true;clearScreen();sfxVictory();addHTML(`<p class="satella-god">"Vamos matar Aetheron. Juntos."</p>`);addChoices([{text:'▶ Continuar',action:sceneTreino}]);},cls:'satella-btn'},
+    {text:'⚔ Rejeitar',action:()=>{addSatellaTrust(-50);addInsanity(20);clearScreen();addHTML(`<p class="alastor">"Você me usou."</p>`);addChoices([{text:'▶ Continuar',action:sceneTreino}]);},cls:'danger'},
+    {text:'💀 Matar',action:()=>{game.satellaDead=true;game.hasPact=true;game.flags.demonicCurse=true;game.reputation=-50;game.flags.reputationVisible=true;clearScreen();flashScreen('flash-black');corruptMagic();game.str+=30;game.int+=30;game.def+=20;updateStats();addHTML(`<p class="demon">"Bem-vindo, filho."</p>`);addChoices([{text:'🌑 Continuar',action:sceneTreino}]);},cls:'danger'}
+  ]);
+}
+function sceneVillage(){
+  setLocation('Vila');clearScreen();
+  if(!game.visitedMap.includes('vila'))game.visitedMap.push('vila');
+  addHTML(`<h2>Vila de Folhas-Secas</h2><div class="village-scene"><p class="villager">"Bem-vindo!"</p></div><div class="gold-display">Ouro: ${game.gold}</div>`);
+  addChoices([{text:'🛒 Ferreiro',action:sceneShopBlacksmith},{text:'🧪 Alquimista',action:sceneShopAlchemist},{text:'◀ Voltar',action:sceneTreino},{text:'⚙ Menu',action:openSysMenu}]);
+}
+function sceneShopBlacksmith(){
+  setLocation('Ferreiro');clearScreen();
+  addHTML(`<h2>⚒ Forja</h2><div class="gold-display">Ouro: ${game.gold}</div>
+    <div class="shop-item"><div><div class="item-name">Espada</div><div class="item-desc">+5 FOR</div></div><div><span class="item-price">80</span> <button onclick="buyItem('espada',80,()=>{game.str+=5;})">Comprar</button></div></div>
+    <div class="shop-item"><div><div class="item-name">Armadura</div><div class="item-desc">+5 DEF</div></div><div><span class="item-price">80</span> <button onclick="buyItem('armadura',80,()=>{game.def+=5;})">Comprar</button></div></div>`);
+  addChoices([{text:'◀ Voltar',action:sceneVillage}]);
+}
+function sceneShopAlchemist(){
+  setLocation('Alquimista');clearScreen();
+  addHTML(`<h2>🧪 Alquimista</h2><div class="gold-display">Ouro: ${game.gold}</div>
+    <div class="shop-item"><div><div class="item-name">Poção</div><div class="item-desc">+80 HP</div></div><div><span class="item-price">30</span> <button onclick="buyItem('poção',30,()=>{game.hp=Math.min(game.hpMax,game.hp+80);})">Comprar</button></div></div>
+    <div class="shop-item"><div><div class="item-name">Grimório</div><div class="item-desc">Reroll!</div></div><div><span class="item-price">300</span> <button onclick="buyItem('grim',300,()=>{game.grimoires++;})">Comprar</button></div></div>`);
+  addChoices([{text:'◀ Voltar',action:sceneVillage}]);
+}
+function buyItem(name,price,cb){initAudio();sfxClick();if(game.gold<price){addHTML(`<p class="whisper">Ouro insuficiente.</p>`);return;}game.gold-=price;cb();updateStats();addHTML(`<p class="loot">✦ ${name}</p>`);}
+
+function sceneFloresta(){
+  setLocation('Floresta');clearScreen();
+  if(!game.visitedMap.includes('floresta'))game.visitedMap.push('floresta');
+  addHTML(`<div class="first-person-active"><p class="fp-sensation">Um <b style="color:#ffb040">Servo Divino</b> desce.</p></div>`);
+  addChoices([{text:'⚔ Lutar',action:()=>startCombat('Servo Divino',90,14,'comum',sceneRavina)},{text:'🏃 Fugir',action:sceneRavina}]);
+}
+function sceneRavina(){
+  setLocation('Ravina');game.hp=Math.max(5,Math.floor(game.hpMax*0.1));updateStats();
+  clearScreen();flashScreen('flash-red');shakeScreen();sfxDamage();
+  if(!game.visitedMap.includes('ravina'))game.visitedMap.push('ravina');
+  addHTML(`<div class="first-person-active"><p class="whisper">"desista..."</p></div>`);
+  addInsanity(10);
+  addChoices([{text:'🩸 Arrastar',action:scenePentagrama}]);
+}
+function scenePentagrama(){
+  setLocation('Câmara Oculta');clearScreen();sfxDark();
+  addHTML(`<div class="first-person-active"><p class="demon">"Filho do fim..."</p></div>`);
+  addLore('lore4');
+  addChoices([{text:'🔮 VERIFICAR',action:scenePacto,cls:'danger'},{text:'🚪 SAÍDA',action:sceneSaida}]);
+}
+function scenePacto(){
+  setLocation('Pacto');clearScreen();sfxDark();
+  addHTML(`<div class="first-person-active"><p class="demon">"EU SOU NAMAROTH. ACEITA?"</p></div>`);
+  game.hasPact=true;addInsanity(40);shakeScreen();flashScreen('flash-black');unlockAchievement('first_pact');corruptMagic();recalcSatanPower();
+  setTimeout(()=>{clearScreen();addHTML(`<h2 style="text-align:center;color:#d060ff;">✦ PACTO SELADO ✦</h2><p class="shadow-magic">✦ Magia Sombria: <b>${game.magic.nome}</b> ✦</p><p class="loot">✦ +30% dano sombrio</p><p class="loot">✦ +5 FOR, +5 INT, +5 DEF</p><p class="whisper">✦ MALDIÇÃO: a terra morre onde você pisa.</p>`);game.str+=5;game.int+=5;game.def+=5;game.reputation=-30;game.flags.reputationVisible=true;game.flags.demonicCurse=true;updateStats();saveGame();addChoices([{text:'▶ Continuar',action:scenePosPacto}]);},2600);
+}
+function scenePosPacto(){
+  setLocation('Saída');clearScreen();
+  addHTML(`<div class="first-person-active"><p class="satella">"Você vendeu sua alma..."</p></div>`);
+  addLore('lore2');
+  addChoices([{text:'🌑 Seguir',action:sceneTreinoPosPacto}]);
+}
+function sceneTreinoPosPacto(){
+  game.age=18;game.str=25;game.int=28;game.def=22;game.hpMax=280;game.hp=280;game.manaMax=320;game.mana=320;updateStats();
+  setChapter(6,'18 Anos');setLocation('Estrada');clearScreen();
+  addHTML(`<div class="first-person-active"><p class="villager" style="color:#ff6060;">"É ELE! O DEMÔNIO!"</p></div>`);
+  addChoices([{text:'⚔ Lutar',action:()=>startCombat('Multidão',60,8,'comum',()=>{addInsanity(10);changeReputation(-10);scenePosPactoVila();}),cls:'danger'},{text:'🏃 Fugir',action:()=>{addInsanity(5);changeReputation(-5);scenePosPactoVila();}}]);
+}
+function scenePosPactoVila(){
+  setLocation('Vila em Chamas');clearScreen();
+  addHTML(`<div class="first-person-active"><p class="god" style="font-size:20px;">"ALASTOR..."</p></div>`);
+  addChoices([{text:'😖 Resistir',action:sceneTortura,cls:'danger'}]);
+}
+function sceneSaida(){
+  setLocation('Passagem');clearScreen();
+  addHTML(`<div class="first-person-active"><p class="satella">"Você voltou. Sem o poder. Mas inteiro."</p></div>`);
+  game.flags.semPacto=true;
+  addChoices([{text:'▶ Continuar',action:sceneTreinoPosRavina}]);
+}
+function sceneTreinoPosRavina(){
+  game.age=18;game.str=18;game.int=22;game.def=16;game.hpMax=220;game.hp=220;game.manaMax=260;game.mana=260;updateStats();
+  setChapter(6,'18 Anos');setLocation('Estrada');clearScreen();
+  addHTML(`<div class="first-person-active"><p class="god" style="font-size:20px;">"ALASTOR..."</p></div>`);
+  addChoices([{text:'😖 Resistir',action:sceneTortura,cls:'danger'}]);
+}
+function sceneTortura(){
+  setLocation('Prisão Divina');clearScreen();flashScreen('flash-white');shakeScreen();sfxGod();
+  addHTML(`<div class="first-person-active"><p class="god">"Onde está o pentagrama?"</p><p class="whisper">"levante-se..."</p></div>`);
+  addInsanity(15);
+  addChoices([{text:'🔥 Resistir',action:()=>{game.str+=10;game.int+=5;updateStats();sceneLutaDeus();}},{text:'🩸 Aceitar',action:()=>{game.def+=8;game.insanity+=10;updateStats();sceneLutaDeus();}}]);
+}
+function sceneLutaDeus(){
+  game.age=18;game.hp=Math.floor(game.hpMax*0.6);game.mana=game.manaMax;updateStats();
+  setChapter(7,'1º Deus');setLocation('Entre Planos');clearScreen();sfxGod();
+  addHTML(`<div class="first-person-active"><p class="god">"EU TE QUEBRO."</p></div><p class="loot">⚠ 450 HP.</p>`);
+  addChoices([{text:'⚔ LUTAR',action:()=>startCombat('O Primeiro Deus',450,35,'deus',sceneVitoriaDeus,null),cls:'danger'}]);
+}
+function sceneVitoriaDeus(){
+  setLocation('Entre Planos');setChapter(8,'Deus Caiu');
+  game.deityKills=1;game.souls=1;game.godsDefeated.push('Primeiro');
+  game.hpMax+=150;game.hp=game.hpMax;game.manaMax+=150;game.mana=game.manaMax;
+  game.str+=30;game.int+=30;game.def+=20;updateStats();clearScreen();flashScreen('flash-black');sfxGod();unlockAchievement('first_deity');
+  addHTML(`<h1 style="color:#ffe080;">O PRIMEIRO DEUS CAIU</h1><p class="loot">✦ +150 HP/MP, +30 FOR/INT, +20 DEF</p>`);
+  game.grimoires++;
+  if(!game.hasPact){game.flags.angelForm=true;game.def+=30;updateStats();}
+  saveGame();
+  addChoices([{text:'▶ Continuar',action:sceneVilasPosDeus}]);
+}
+function sceneVilasPosDeus(){
+  setLocation('Vila');setChapter(9,'Herói');clearScreen();
+  if(!game.hasPact){changeReputation(50);addHTML(`<h2>Vila</h2><p class="villager" style="color:#b0e090;">"É ELE! O HERÓI!"</p><p class="loot">✦ +50 REP, +100 Ouro</p>`);game.gold+=100;updateStats();}
+  else{changeReputation(-20);addHTML(`<h2>Vila Destruída</h2><p class="villager" style="color:#ff6060;">"É ELE! O DEMÔNIO!"</p>`);}
+  saveGame();
+  addChoices([
+    {text:'📖 Grimórios',action:sceneGrimoireUse},
+    {text:'⚔ 2º Deus',action:sceneSegundoDeus},
+    {text:'🔥 Inferno',action:()=>{if(game.voidRoute||game.demonPacts.length>0){sceneInferno();}else{addHTML('<p class="whisper">Sem acesso.</p>');}},cls:'demon-btn'},
+    {text:'⚙ Menu',action:openSysMenu}
+  ]);
+}
+function sceneGrimoireUse(){
+  setLocation('Grimório');clearScreen();
+  if(game.grimoires<=0){addHTML(`<p>Sem grimórios.</p>`);addChoices([{text:'◀ Voltar',action:sceneVilasPosDeus}]);return;}
+  addHTML(`<h2 style="font-family:'UnifrakturMaguntia',serif;color:#d080ff;font-size:34px;text-align:center;">📖 Grimório</h2><div class="grimoire-card"><p class="grimoire">Grimórios: ${game.grimoires}</p><p class="loot">✦ Reroll (5% ARCANA!)</p><p class="loot">✦ +10 INT</p></div>`);
+  addChoices([
+    {text:'🎲 Reroll',action:()=>{if(game.grimoires<1)return;game.grimoires--;updateStats();flashScreen('flash-black');sfxDark();setTimeout(()=>{if(Math.random()<0.05){const arc=rollArcana();game.magic=arc;game.magicRarity='arcana';unlockAchievement('arcana');game.skills=arc.skills.map((s,i)=>({...s,unlocked:i===0}));if(game.hasPact)corruptMagic();updateStats();flashScreen('flash-purple');clearScreen();sfxMagic();addHTML(`<div class="arcana-card"><h1 class="rarity-arcana" style="font-size:52px;margin:15px 0;">${arc.nome.toUpperCase()}</h1><p class="rarity-arcana">✦ ARCANA ✦</p></div>`);shakeScreen();saveGame();addChoices([{text:'▶ Continuar',action:sceneVilasPosDeus}]);}else{const m=rollMagic();game.magic=m;game.magicRarity=m.raridade;game.skills=m.skills.map((s,i)=>({...s,unlocked:i===0}));if(game.hasPact)corruptMagic();updateStats();flashScreen('flash-purple');clearScreen();sfxMagic();addHTML(`<div class="grimoire-card"><h1 class="${rarityClass(m.raridade)}" style="font-size:44px;margin:15px 0;">${m.nome.toUpperCase()}</h1></div>`);saveGame();addChoices([{text:'▶ Continuar',action:sceneVilasPosDeus}]);}},800);},cls:'grimoire-btn'},
+    {text:'✨ +10 INT',action:()=>{if(game.grimoires<1)return;game.grimoires--;game.int+=10;updateStats();sceneVilasPosDeus();}},
+    {text:'◀ Voltar',action:sceneVilasPosDeus}
+  ]);
+}
+function sceneSegundoDeus(){
+  setLocation('Templo 2º');setChapter(10,'2º Deus');game.age=20;updateStats();clearScreen();sfxGod();
+  if(!game.visitedMap.includes('templo2'))game.visitedMap.push('templo2');
+  addHTML(`<div class="first-person-active"><p class="god">"Meu irmão caiu. Eu não cairei."</p></div><p class="loot">⚠ 600 HP.</p>`);
+  addChoices([{text:'⚔ LUTAR',action:()=>startCombat('O Segundo Deus',600,45,'deus',sceneVitoriaDeus2),cls:'danger'}]);
+}
+function sceneVitoriaDeus2(){
+  game.deityKills=2;game.souls+=1;game.godsDefeated.push('Segundo');
+  game.hpMax+=120;game.hp=game.hpMax;game.manaMax+=120;game.mana=game.manaMax;
+  game.str+=25;game.int+=25;game.def+=20;game.grimoires+=1;updateStats();flashScreen('flash-black');clearScreen();sfxGod();
+  addHTML(`<h1 style="color:#ffe080;">O SEGUNDO DEUS CAIU</h1><p class="loot">✦ +120 HP/MP, +25 FOR/INT, +20 DEF, +1 GRIMÓRIO</p>`);
+  saveGame();addChoices([{text:'⚔ 3º Deus',action:sceneTerceiroDeus}]);
+}
+function sceneSegundoDeusVazio(){
+  setLocation('Templo 2º');game.age=20;updateStats();clearScreen();sfxGod();
+  addHTML(`<div class="first-person-active"><p class="god">"Um sem mana? Morra."</p></div><p class="loot">⚠ 400 HP.</p>`);
+  addChoices([{text:'⚔ LUTAR',action:()=>startCombat('O Segundo Deus',400,30,'deus',()=>{game.deityKills++;game.souls++;updateStats();clearScreen();flashScreen('flash-gold');sfxVictory();addHTML(`<h1 style="color:#ffe080;">O SEGUNDO DEUS CAIU</h1><div class="first-person-active"><p class="fp-action">Eu matei um deus sem magia.</p></div>`);unlockAchievement('no_mana');saveGame();addChoices([{text:'🔥 Ir ao Inferno',action:sceneInferno,cls:'demon-btn'},{text:'▶ Jogar Novamente',action:()=>{resetGame();showTitleScreen();}}]);}),cls:'danger'}]);
+}
+function sceneTerceiroDeus(){
+  setLocation('Vila Escondida');setChapter(11,'3º Deus');game.age=21;updateStats();clearScreen();sfxGod();
+  addHTML(`<div class="first-person-active"><p class="god" style="color:#c0a0ff;">"Mate-me se precisar. Mas poupe as crianças."</p></div>`);
+  addChoices([{text:'⚔ MATÁ-LA',action:()=>startCombat('O Terceiro Deus',500,30,'deus',sceneVitoriaDeus3),cls:'danger'},{text:'🕊 POUPÁ-LA',action:()=>{game.flags.sparedThird=true;game.souls+=1;game.deityKills=3;game.godsDefeated.push('Terceiro (poupado)');game.int+=40;game.def+=40;game.grimoires+=2;updateStats();clearScreen();sfxVictory();addHTML(`<p class="loot">✦ Poupada. +40 INT, +40 DEF, +2 GRIMÓRIOS</p>`);saveGame();addChoices([{text:'⚔ 4º Deus',action:sceneQuartoDeus}]);}}]);
+}
+function sceneVitoriaDeus3(){
+  game.deityKills=3;game.souls+=1;game.godsDefeated.push('Terceiro');
+  game.hpMax+=100;game.hp=game.hpMax;game.manaMax+=100;game.mana=game.manaMax;
+  game.str+=20;game.int+=20;game.def+=15;game.grimoires+=1;updateStats();flashScreen('flash-black');clearScreen();sfxGod();
+  addHTML(`<h1 style="color:#ffe080;">O TERCEIRO DEUS CAIU</h1><p class="loot">✦ +100 HP/MP, +20 FOR/INT, +15 DEF, +1 GRIMÓRIO</p>`);
+  saveGame();addChoices([{text:'⚔ 4º Deus',action:sceneQuartoDeus}]);
+}
+function sceneQuartoDeus(){
+  setLocation('Cemitério');setChapter(12,'4º Deus');game.age=22;updateStats();clearScreen();sfxGod();
+  if(!game.visitedMap.includes('cemiterio'))game.visitedMap.push('cemiterio');
+  addHTML(`<div class="first-person-active"><p class="god" style="color:#a0a0a0;">"Me mate... me liberte..."</p></div><p class="loot">⚠ 700 HP.</p>`);
+  addChoices([{text:'⚔ LIBERTÁ-LO',action:()=>startCombat('O Quarto Deus',700,50,'deus',sceneVitoriaDeus4),cls:'danger'}]);
+}
+function sceneVitoriaDeus4(){
+  game.deityKills=4;game.souls+=1;game.godsDefeated.push('Quarto');
+  game.hpMax+=80;game.hp=game.hpMax;game.manaMax+=80;game.mana=game.manaMax;
+  game.str+=15;game.int+=25;game.def+=15;game.grimoires+=2;updateStats();flashScreen('flash-black');clearScreen();sfxGod();
+  addHTML(`<h1 style="color:#ffe080;">O QUARTO DEUS DESCANSOU</h1><p class="loot">✦ +80 HP/MP, +15 FOR, +25 INT, +15 DEF, +2 GRIMÓRIOS</p><p class="satella">"Falta um. Aetheron."</p>`);
+  saveGame();addChoices([{text:'⚔ Aetheron',action:sceneQuintoDeus}]);
+}
+function sceneQuintoDeus(){
+  setLocation('Vazio');setChapter(13,'Aetheron');game.age=23;updateStats();clearScreen();sfxGod();
+  if(!game.visitedMap.includes('vazio'))game.visitedMap.push('vazio');
+  addHTML(`<div class="first-person-active"><p class="god" style="font-size:20px;">"ALASTOR. O ÚLTIMO ERRO."</p></div><p class="loot">⚠ 1500 HP.</p>`);
+  addChoices([{text:'⚔ LUTAR',action:()=>startCombat('Aetheron',1500,60,'deus',sceneFinalVitoria),cls:'danger'}]);
+}
+function sceneNamaroth(){
+  setLocation('Namaroth');clearScreen();flashScreen('flash-black');sfxDark();
+  if(!game.visitedMap.includes('namaroth'))game.visitedMap.push('namaroth');
+  addHTML(`<h1 style="color:#c060ff;">Namaroth</h1><div class="first-person-active"><p class="namaroth">"Eu esperei. Sua mãe era minha irmã. Você é meu sobrinho."</p></div>`);
+  addLore('lore2');
+  addChoices([{text:'⚔ LUTAR',action:()=>startCombat('Namaroth',2000,80,'secreto',sceneNamarothVitoria),cls:'demon-btn'},{text:'🚶 Recuar',action:sceneTreino}]);
+}
+function sceneNamarothVitoria(){
+  game.namarothDefeated=true;game.souls+=3;unlockAchievement('namaroth');
+  game.hpMax+=500;game.hp=game.hpMax;game.manaMax+=500;game.mana=game.manaMax;
+  game.str+=60;game.int+=60;game.def+=60;game.grimoires+=5;updateStats();flashScreen('flash-gold');clearScreen();sfxVictory();
+  addHTML(`<h1 style="color:#c060ff;">Namaroth Caiu</h1><p class="loot">✦ +500 HP/MP, +60 FOR/INT/DEF, +5 GRIMÓRIOS</p>`);
+  saveGame();addChoices([{text:'▶ Continuar',action:sceneQuintoDeus}]);
+}
+function sceneFinalVitoria(){
+  setLocation('Vazio');
+  game.deityKills=5;game.souls+=5;game.godsDefeated.push('Quinto');
+  game.hpMax+=300;game.hp=game.hpMax;game.manaMax+=300;game.mana=game.manaMax;
+  game.str+=50;game.int+=50;game.def+=50;updateStats();flashScreen('flash-black');clearScreen();sfxGod();unlockAchievement('all_deities');
+  addHTML(`<h1 style="color:#ffe080;">AETHERON CAIU</h1><div class="first-person-active"><p class="satella">"Viva, Alastor. Viva... por todos nós."</p></div><p class="loot">✦ +300 HP/MP, +50 FOR/INT/DEF</p>`);
+  game.satellaDead=true;updateStats();saveGame();
+  addHTML(`<h2>Escolha seu destino</h2>`);
+  const opts=[
+    {text:'🕊 Herói',action:finalAnjo},
+    {text:'⚔ Caçador',action:finalCacador},
+    {text:'💀 Novo Deus',action:finalDeus,cls:'danger'},
+    {text:'👁 Verdade (secreto)',action:finalVerdade,cls:'grimoire-btn'}
+  ];
+  if(game.satellaRebellion||game.satellaTrust>=80)opts.push({text:'✦ Rebelião (secreto final)',action:finalDeusas,cls:'satella-btn'});
+  if(game.hasPact)opts.push({text:'🌑 Reinar',action:finalDemonio},{text:'⚔ Apocalipse',action:finalApocalipse,cls:'danger'});
+  if(game.demonPacts.length>=5)opts.push({text:'🔥 O Trono de Satanás (secreto)',action:sceneFinalSatan,cls:'satan-btn'});
+  addChoices(opts);
+}
+function sceneFinalSatan(){
+  clearScreen();flashScreen('flash-hell');shakeScreen();sfxHell();
+  setLocation('Trono do Inferno');setChapter('∞','O Novo Satanás');
+  addHTML(`<h1 style="color:#ff0040;font-size:56px;text-shadow:0 0 30px #f00,0 0 60px #800,0 0 100px #400;">SATANÁS</h1>
+    <div class="first-person-active">
+      <p class="fp-sensation">O Inferno se abre. Não em chamas — em algo mais antigo.</p>
+      <p class="fp-thought">Eu estou diante do trono. E no trono... não há ninguém. Satanás está morto. Ele só esperava alguém para ocupar o lugar.</p>
+      <p class="demon">"Você fez pactos com todos os Sete. Você sobreviveu ao Vazio. Você é o novo Satanás."</p>
+      <p class="satan">"Eu sou o Rei do Inferno. E o mundo... o mundo será meu."</p>
+    </div>
+    <div class="satan-card">
+      <p class="satan" style="font-size:32px;letter-spacing:8px;">✦ O NOVO SATANÁS ✦</p>
+      <p style="color:#ff5080;font-size:16px;margin-top:14px;font-style:italic;">Você fez pactos com os Sete. Você absorveu o Vazio. Você se tornou o próprio Satanás.</p>
+      <p class="loot" style="margin-top:16px;">✦ FINAL SECRETO — O Trono de Sangue ✦</p>
+      <p style="color:#c0a0a0;margin-top:12px;">Demônios: 7/7 | Poder de Satanás: 100/100</p>
+    </div>`);
+  unlockAchievement('all_demons');unlockAchievement('full_satan');
+  addChoices([{text:'🔄 Jogar Novamente',action:()=>{resetGame();showTitleScreen();}},{text:'⚙ Menu',action:openSysMenu}]);
+}
+function finalAnjo(){clearScreen();sfxVictory();addHTML(`<h1 style="color:#ffe080;">O ANJO DAS CINZAS</h1>`);addChoices([{text:'🔄 Novo Jogo',action:()=>{resetGame();showTitleScreen();}},{text:'⚙ Menu',action:openSysMenu}]);}
+function finalCacador(){clearScreen();addHTML(`<h1 style="color:#c0c0c0;">O CAÇADOR DE CULTOS</h1>`);addChoices([{text:'🔄 Novo Jogo',action:()=>{resetGame();showTitleScreen();}},{text:'⚙ Menu',action:openSysMenu}]);}
+function finalDeus(){clearScreen();sfxDark();addHTML(`<h1 style="color:#ff40ff;">O NOVO DEUS</h1>`);addChoices([{text:'🔄 Novo Jogo',action:()=>{resetGame();showTitleScreen();}},{text:'⚙ Menu',action:openSysMenu}]);}
+function finalDemonio(){clearScreen();sfxDark();addHTML(`<h1 style="color:#d060ff;">O DEMÔNIO DAS CINZAS</h1>`);addChoices([{text:'🔄 Novo Jogo',action:()=>{resetGame();showTitleScreen();}},{text:'⚙ Menu',action:openSysMenu}]);}
+function finalApocalipse(){clearScreen();sfxDark();addHTML(`<h1 style="color:#ff0040;">O APOCALIPSE</h1>`);addChoices([{text:'🔄 Novo Jogo',action:()=>{resetGame();showTitleScreen();}},{text:'⚙ Menu',action:openSysMenu}]);}
+function finalVerdade(){clearScreen();flashScreen('flash-black');addHTML(`<h1 style="color:#ffe080;">A VERDADE SOBRE SUA MÃE</h1><div class="first-person-active"><p>Minha mãe era a Sexta Deusa do Amor.</p></div>`);addChoices([{text:'🔄 Novo Jogo',action:()=>{resetGame();showTitleScreen();}},{text:'⚙ Menu',action:openSysMenu}]);}
+function finalDeusas(){clearScreen();flashScreen('flash-gold');sfxVictory();unlockAchievement('true_ending');addHTML(`<h1 style="color:#ffe080;">A REBELIÃO DAS DEUSAS</h1><div class="first-person-active"><p>Eu liberto todas as almas.</p><p class="satella-god">"Você é o Primeiro. O Primeiro Deus da Liberdade."</p></div>`);addChoices([{text:'🔄 Novo Jogo',action:()=>{resetGame();showTitleScreen();}},{text:'⚙ Menu',action:openSysMenu}]);}
+
+// ==================== COMBATE ====================
+let combat=null;
+function startCombat(enemyName,enemyHp,enemyAtk,tier,onWin){
+  combat={enemyName,enemyHp,enemyHpMax:enemyHp,enemyAtk,tier,enemyStun:0,playerStun:0,playerHaste:false,playerDefenseBoost:0,enemyBlind:0,playerReflect:false,playerEvade:false,turn:1,log:[],onWin};
+  const bm={'Servo Divino':'servo','Multidão':'multidao','O Primeiro Deus':'deus1','O Segundo Deus':'deus2','O Terceiro Deus':'deus3','O Quarto Deus':'deus4','Aetheron':'aetheron','Namaroth':'namaroth'};
+  if(bm[enemyName])addToBestiary(bm[enemyName]);
+  renderCombat();
+}
+function combatLog(m){combat.log.push(m);if(combat.log.length>6)combat.log.shift();}
+function renderCombat(){
+  clearScreen();setLocation('Combate: '+combat.enemyName);
+  const pPct=Math.max(0,(game.hp/game.hpMax)*100);
+  const ePct=Math.max(0,(combat.enemyHp/combat.enemyHpMax)*100);
+  addHTML(`
+    <div class="combat-arena">
+      <div class="fighter" id="playerFighter"><div class="name">ALASTOR</div><div style="width:70px;height:110px;position:relative;">${document.getElementById('spriteFrame').querySelector('.pixel-sprite').outerHTML}</div><div class="hp-mini player-hp"><div style="width:${pPct}%"></div></div></div>
+      <div style="font-family:'Cinzel';color:#e04040;font-size:30px;text-shadow:0 0 20px #f00;">⚔</div>
+      <div class="fighter" id="enemyFighter"><div class="name" style="color:${combat.tier==='deus'?'#ffe080':'#ffb040'};">${combat.enemyName.toUpperCase()}${combat.enemyBlind>0?' (CEGO)':''}</div><div class="${combat.enemyBlind>0?'blind-effect':''}">${renderEnemySprite(combat.tier==='deus')}</div><div class="hp-mini enemy-hp"><div style="width:${ePct}%"></div></div></div>
+    </div>
+    <div id="combatLog">${combat.log.map(l=>`<p>${l}</p>`).join('')}</div>
+    <h2>Turno ${combat.turn}</h2>
+  `);
+  const choices=[];
+  game.skills.forEach((s,i)=>{
+    if(!s.unlocked)return;
+    const canUse=game.mana>=s.custo&&combat.playerStun===0;
+    let extra='';if(s.efeito==='blind')extra+=' ☇';if(s.efeito==='hp_cost'||s.efeito==='hp_cost_heal')extra+=' 🩸';
+    choices.push({text:`✦ ${s.nome} (${s.custo}m${s.dano>0?' • '+s.dano+'d':''})${extra}`,cls:canUse?'magic-btn':'',disabled:!canUse,action:()=>useSkill(i)});
+  });
+  choices.push({text:'🛡 Defender',disabled:combat.playerStun>0,action:useDefend});
+  const wrap=document.createElement('div');wrap.className='choices';wrap.style.display='grid';wrap.style.gridTemplateColumns='1fr 1fr';
+  choices.forEach(c=>{const btn=document.createElement('button');btn.textContent=c.text;btn.className=c.cls||'';btn.disabled=c.disabled;btn.onclick=()=>{initAudio();sfxClick();c.action();};wrap.appendChild(btn);});
+  screen.appendChild(wrap);
+}
+function renderEnemySprite(isGod){
+  if(isGod){return `<div style="width:80px;height:110px;position:relative;filter:drop-shadow(0 0 20px #fa0);"><div style="position:absolute;left:50%;top:0;transform:translateX(-50%);width:60px;height:60px;background:radial-gradient(circle,#ffe080,#a04000);border-radius:50%;box-shadow:0 0 40px #fa0;"></div><div style="position:absolute;left:50%;top:15px;transform:translateX(-50%);width:40px;height:40px;background:#301000;"></div><div style="position:absolute;left:50%;top:22px;transform:translateX(-50%);display:flex;gap:8px;"><div style="width:6px;height:6px;background:#ff0040;"></div><div style="width:6px;height:6px;background:#ff0040;"></div></div><div style="position:absolute;left:50%;top:55px;transform:translateX(-50%);width:44px;height:55px;background:linear-gradient(180deg,#401000,#100400);"></div></div>`;}
+  return `<div style="width:70px;height:100px;position:relative;"><div style="position:absolute;left:50%;top:10px;transform:translateX(-50%);width:28px;height:28px;background:#e0d0b0;"></div><div style="position:absolute;left:50%;top:20px;transform:translateX(-50%);display:flex;gap:5px;"><div style="width:4px;height:4px;background:#fff;"></div><div style="width:4px;height:4px;background:#fff;"></div></div><div style="position:absolute;left:50%;top:38px;transform:translateX(-50%);width:30px;height:50px;background:linear-gradient(180deg,#e0e0f0,#8080a0);"></div></div>`;
+}
+function floatDamage(isE,dmg){const t=document.getElementById(isE?'enemyFighter':'playerFighter');if(!t)return;const d=document.createElement('div');d.className='float-dmg';d.textContent='-'+dmg;d.style.left='50%';d.style.top='40%';t.appendChild(d);setTimeout(()=>d.remove(),1000);}
+function animateAttack(isE){const el=document.getElementById(isE?'enemyFighter':'playerFighter');if(!el)return;el.classList.add('attack-anim');setTimeout(()=>el.classList.remove('attack-anim'),350);}
+function animateHit(isE){const el=document.getElementById(isE?'enemyFighter':'playerFighter');if(!el)return;el.classList.add('hit-anim');setTimeout(()=>el.classList.remove('hit-anim'),350);}
+function bloodDripEffect(){const g=document.getElementById('game');for(let i=0;i<6;i++){const d=document.createElement('div');d.className='blood-drip';d.style.left=(Math.random()*80+10)+'%';d.style.top=(Math.random()*40)+'%';d.style.height=(10+Math.random()*20)+'px';g.appendChild(d);setTimeout(()=>d.remove(),1500);}g.classList.add('hp-cost-effect');setTimeout(()=>g.classList.remove('hp-cost-effect'),600);}
+function blindMissEffect(){const e=document.getElementById('enemyFighter');if(e){e.classList.add('blind-effect');setTimeout(()=>e.classList.remove('blind-effect'),800);}flashScreen('flash-white');}
+function useSkill(idx){
+  const sk=game.skills[idx];if(game.mana<sk.custo)return;
+  game.mana-=sk.custo;
+  if(sk.efeito==='hp_cost'){const hc=sk.nome.includes('Pacto')?25:(sk.nome.includes('Sacrifício')?40:8);game.hp-=hc;bloodDripEffect();combatLog(`🩸 ${sk.nome}: -${hc} HP!`);updateStats();if(game.hp<=0){endCombat(false);return;}}
+  if(sk.efeito==='hp_cost_heal'){const hc=30;const heal=sk.nome.includes('Pacto')?99:60;game.hp-=hc;game.hp=Math.min(game.hpMax,game.hp+heal);bloodDripEffect();combatLog(`🩸 -${hc} HP, +${heal} HP.`);updateStats();endPlayerTurn();return;}
+  if(sk.efeito==='heal'){const h=40;game.hp=Math.min(game.hpMax,game.hp+h);combatLog(`+${h} HP.`);endPlayerTurn();return;}
+  if(sk.efeito==='defesa'){combat.playerDefenseBoost=2;combatLog(`Defesa+.`);endPlayerTurn();return;}
+  if(sk.efeito==='stun'){combat.enemyStun=1;combatLog(`Atordoado!`);if(sk.dano>0){combat.enemyHp-=sk.dano;floatDamage(true,sk.dano);animateHit(true);}endPlayerTurn();return;}
+  if(sk.efeito==='reflect'){combat.playerReflect=true;combatLog(`Reflete!`);endPlayerTurn();return;}
+  if(sk.efeito==='evade'){combat.playerEvade=true;combatLog(`Esquiva.`);endPlayerTurn();return;}
+  if(sk.efeito==='haste'){combat.playerHaste=true;combatLog(`Age 2x!`);endPlayerTurn();return;}
+  if(sk.efeito==='blind'){combat.enemyBlind=2;combatLog(`☇ INIMIGO CEGO!`);blindMissEffect();}
+  const bonus=game.hasPact?1.3:1;const intB=1+(game.int*0.05);
+  const dmg=Math.floor(sk.dano*bonus*intB);
+  combat.enemyHp-=dmg;floatDamage(true,dmg);animateAttack(false);animateHit(true);
+  combatLog(`Dano: ${dmg}.`);sfxMagic();
+  if(combat.enemyHp<=0){endCombat(true);return;}
+  endPlayerTurn();
+}
+function useDefend(){combat.playerDefenseBoost=1;combatLog('Defendeu.');endPlayerTurn();}
+function endPlayerTurn(){if(combat.enemyHp<=0){endCombat(true);return;}setTimeout(()=>{if(combat.enemyStun>0){combat.enemyStun--;combatLog(`${combat.enemyName} atordoado.`);return;}enemyTurn();},700);}
+function enemyTurn(){
+  if(game.hp<=0){endCombat(false);return;}
+  animateAttack(true);
+  if(combat.enemyBlind>0){if(Math.random()<0.6){combatLog(`☇ ${combat.enemyName} ERROU!`);blindMissEffect();combat.enemyBlind--;combat.turn++;setTimeout(renderCombat,400);return;}combat.enemyBlind--;}
+  let dmg=combat.enemyAtk+Math.floor(Math.random()*10);
+  if(combat.playerDefenseBoost>0){dmg=Math.floor(dmg*0.4);combat.playerDefenseBoost--;combatLog(`Defesa reduziu para ${dmg}.`);}
+  else if(combat.playerEvade){combatLog('Esquivou!');combat.playerEvade=false;return;}
+  else{combatLog(`Atacou. Dano: ${dmg}.`);}
+  if(combat.playerReflect){combatLog(`✦ Refletido!`);combat.enemyHp-=dmg;combat.playerReflect=false;floatDamage(true,dmg);animateHit(true);if(combat.enemyHp<=0){endCombat(true);return;}return;}
+  const defR=Math.floor(dmg*(game.def*0.02));dmg=Math.max(1,dmg-defR);
+  game.hp-=dmg;floatDamage(false,dmg);animateHit(false);updateStats();sfxDamage();
+  if(game.hp<=0){endCombat(false);return;}
+  combat.turn++;
+  if(combat.playerHaste){combat.playerHaste=false;combatLog('⚡ Turno extra!');setTimeout(renderCombat,250);}
+  else{setTimeout(renderCombat,250);}
+}
+function endCombat(won){
+  setTimeout(()=>{
+    clearScreen();
+    if(won){
+      sfxVictory();
+      addHTML(`<h2 style="color:#60c060;">✦ VITÓRIA ✦</h2>`);
+      const xp=combat.tier==='deus'?50:(combat.tier==='secreto'?80:8);
+      game.int+=Math.floor(xp/3);game.str+=Math.floor(xp/4);game.def+=Math.floor(xp/4);
+      game.mana=game.manaMax;game.hp=Math.min(game.hpMax,game.hp+30);
+      game.gold+=combat.tier==='deus'?200:(combat.tier==='secreto'?500:20);
+      let grimDrop=false;
+      if(combat.tier==='deus'&&Math.random()<0.6){game.grimoires++;grimDrop=true;}
+      else if(combat.tier==='secreto'){game.grimoires+=3;grimDrop=true;}
+      else if(Math.random()<0.1){game.grimoires++;grimDrop=true;}
+      updateStats();
+      addHTML(`<p class="loot">✦ +${Math.floor(xp/3)} INT | +${Math.floor(xp/4)} FOR | +${Math.floor(xp/4)} DEF | +${combat.tier==='deus'?200:(combat.tier==='secreto'?500:20)} ouro</p>`);
+      if(grimDrop)addHTML(`<p class="grimoire">✦ GRIMÓRIO(S) DROPADO(S)! (${game.grimoires} total)</p>`);
+      saveGame();
+      if(combat.onWin)addChoices([{text:'▶ Continuar',action:combat.onWin}]);
+      else addChoices([{text:'▶ Continuar',action:()=>sceneTreino()}]);
+    } else {
+      sfxDark();
+      addHTML(`<h2 style="color:#e04040;">DERROTA</h2><p class="narration">Você cai...</p>`);
+      addChoices([{text:'▶ Despertar',action:()=>{game.hp=Math.floor(game.hpMax*0.3);game.mana=Math.floor(game.manaMax*0.3);game.insanity+=5;updateStats();sceneTreino();}}]);
+    }
+  },1200);
+}
+
+// ==================== MENU ====================
+function openSysMenu(){
+  clearScreen();setLocation('Sistemas');sfxClick();
+  addHTML(`<h2>⚙ Sistemas</h2><div class="sys-menu">
+    <button onclick="openBestiary()">📖 Bestiário (${game.bestiary.length}/${BESTIARY.length})</button>
+    <button onclick="openDiary()">📓 Lore (${game.loreFound.length}/${LORE_FRAGMENTS.length})</button>
+    <button onclick="openAchievements()">🏆 Conquistas (${game.achievements.length}/${ACHIEVEMENTS.length})</button>
+    <button onclick="openMap()">🗺 Mapa</button>
+    <button onclick="toggleSound()">🔊 ${game.soundOn?'ON':'OFF'}</button>
+    <button onclick="saveGame();addHTML('<p class=loot>✦ Salvo!</p>');">💾 Salvar</button>
+  </div>`);
+  addChoices([{text:'◀ Voltar',action:()=>{if(game.magic)sceneTreino();else showTitleScreen();}}]);
+}
+function toggleSound(){game.soundOn=!game.soundOn;if(game.soundOn)initAudio();addHTML(`<p class="loot">Som: ${game.soundOn?'ON':'OFF'}</p>`);}
+function openBestiary(){
+  clearScreen();setLocation('Bestiário');
+  addHTML(`<h2>📖 Bestiário</h2><p>${game.bestiary.length}/${BESTIARY.length}</p>`);
+  BESTIARY.forEach(b=>{const k=game.bestiary.includes(b.id);if(k){addHTML(`<div class="bestiary-entry"><div class="bestiary-name">${b.name}</div><div class="bestiary-stats">${b.hp} • ${b.atk} • ${b.tier}</div><div class="bestiary-desc">${b.desc}</div></div>`);}else{addHTML(`<div class="bestiary-entry bestiary-locked"><div class="bestiary-name">???</div></div>`);}});
+  addChoices([{text:'◀ Voltar',action:openSysMenu}]);
+}
+function openDiary(){
+  clearScreen();setLocation('Lore');
+  addHTML(`<h2>📓 Diário</h2><p>${game.loreFound.length}/${LORE_FRAGMENTS.length}</p>`);
+  LORE_FRAGMENTS.forEach(l=>{if(game.loreFound.includes(l.id)){addHTML(`<div class="diary-entry"><div class="diary-title">✦ ${l.titulo}</div><div class="diary-text">${l.texto}</div></div>`);}else{addHTML(`<div class="diary-entry"><div class="diary-title">???</div></div>`);}});
+  addChoices([{text:'◀ Voltar',action:openSysMenu}]);
+}
+function openAchievements(){
+  clearScreen();setLocation('Conquistas');
+  addHTML(`<h2>🏆 Conquistas</h2><p>${game.achievements.length}/${ACHIEVEMENTS.length}</p>`);
+  ACHIEVEMENTS.forEach(a=>{const u=game.achievements.includes(a.id);addHTML(`<div class="bestiary-entry ${u?'':'bestiary-locked'}"><div class="bestiary-name">${u?'✦ ':'🔒 '}${a.name}</div><div class="bestiary-desc">${a.desc}</div></div>`);});
+  addChoices([{text:'◀ Voltar',action:openSysMenu}]);
+}
+function openMap(){
+  clearScreen();setLocation('Mapa');
+  const locs=[
+    {id:'vila',name:'Vila',icon:'🏘',scene:sceneVillage},
+    {id:'floresta',name:'Floresta',icon:'🌲',scene:sceneFloresta},
+    {id:'ravina',name:'Ravina',icon:'🌑',scene:scenePentagrama},
+    {id:'templo2',name:'2º Deus',icon:'⚡',scene:sceneSegundoDeus},
+    {id:'cemiterio',name:'Cemitério',icon:'💀',scene:sceneQuartoDeus},
+    {id:'vazio',name:'Trono do Vazio',icon:'🌌',scene:sceneQuintoDeus},
+    {id:'namaroth',name:'Namaroth',icon:'👁',scene:sceneNamaroth},
+    {id:'inferno',name:'O Inferno',icon:'🔥',scene:sceneInferno}
+  ];
+  addHTML(`<h2>🗺 Mapa</h2><div class="map-grid" id="mapGrid"></div>`);
+  const g=document.getElementById('mapGrid');
+  locs.forEach(l=>{const c=document.createElement('div');const v=game.visitedMap.includes(l.id);c.className='map-cell '+(v?'visited':'');c.innerHTML=`<div class="map-icon">${l.icon}</div><div class="map-name">${l.name}</div><div class="map-status">${v?'✓':'—'}</div>`;c.onclick=()=>{initAudio();sfxClick();if(!game.visitedMap.includes(l.id))game.visitedMap.push(l.id);l.scene();};g.appendChild(c);});
+  addChoices([{text:'◀ Voltar',action:openSysMenu}]);
+}
+
+// ==================== RESET ====================
+function resetGame(){
+  Object.assign(game,{
+    age:0,hp:100,hpMax:100,mana:100,manaMax:100,insanity:0,
+    magic:null,magicRarity:null,hasPact:false,
+    flags:{},str:1,int:1,def:1,skills:[],
+    gold:50,souls:0,reputation:0,hasMana:true,deityKills:0,
+    inventory:[],grimoires:0,cultJoined:false,
+    godsDefeated:[],arcanaUnlocked:false,
+    loreFound:[],macabreNpcsMet:[],
+    satellaTrust:50,satellaRevealed:false,satellaRebellion:false,satellaDead:false,
+    achievements:[],bestiary:[],visitedMap:[],namarothDefeated:false,
+    soundOn:game.soundOn,
+    demonPacts:[],satanPower:0,voidRoute:false,hellUnlocked:false
+  });
+  document.getElementById('game').classList.remove('insanity-effect');
+  updateStats();
+}
+
+// ==================== INÍCIO ====================
+updateStats();
+updateContinueButton();
+setInterval(()=>{if(game.age>0)saveGame();},30000);
+</script>
+</body>
+</html>
